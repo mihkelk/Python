@@ -14,7 +14,7 @@ window.push_handlers(keys)
 t = 1
 fps_display = pyglet.clock.ClockDisplay()
 image =  pyglet.image.load('lel.jpg')
-
+print "test"
 class player:
     def __init__(self, pos, image):
         self.pos=[pos[0],pos[1]]
