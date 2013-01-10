@@ -18,6 +18,7 @@ image =  pyglet.image.load('lel.jpg')
 class player:
     def __init__(self, pos, image):
         self.pos=[pos[0],pos[1]]
+        self.vel=[0,0]
         self.image = pimage
         self.width = 125
         self.height = 118
@@ -35,12 +36,16 @@ class player:
         self.pp3 = [self.pos[0], self.pos[1] - self.height]
         self.pp4 = [self.pp2[0], self.pp3[1]]
         
+        self.pos[0] = (self.pos[0] + self.vel[0]) % window.width
         
-        if self.pos[0] >= platform.pp2[0] or self.pp2[0] <=  platform.pos[0] :
+        self.vel[0] *= .90 #friction, h66rdej6ud
+        # POS [1] ON TEGELIKULT OBJEKTI ALUMISEST SERVAST, tee korda
+        
+        if self.pos[0] >= platform.pp2[0] or self.pp2[0] <=  platform.pos[0] or self.pp3[1] > platform.pos[1] :
             self.pos[1]-=0.5
             print platform.pos
             print platform.pp2
-        #self.image.blit(self.pos[0], self.pos[1])      
+        self.image.blit(self.pos[0], self.pos[1])      
 
 class room:
     def __init__(self, width, height):
@@ -56,19 +61,25 @@ class sprite:
         self.pp2 = [self.pos[0] +self. width, self.pos[1]]
         self.pp3 = [self.pos[0], self.pos[1] - self.height]
         self.pp4 = [self.pp2[0], self.pp3[1]]
+        
+        
     
     def update(self):
         #self.image.blit(-player_1.pos[0]+self.pos[0], player_1.pos[1]+self.pos[1]) 
         self.image.blit(self.pos[0], self.pos[1])
-
-
+        self.pp2 = [self.pos[0] + self.width, self.pos[1]]
+        self.pp3 = [self.pos[0], self.pos[1] - self.height]
+        self.pp4 = [self.pp2[0], self.pp3[1]]
+        
 
 player_1=player([200, 0], pimage)
+print player_1.pp3[1]
 platform = sprite([50,0], platform_imag)
 
 print player_1.pos
-print player_1.pp2
-print platform.pos[0]
+print player_1.pos[1]
+print player_1.pp3[1]
+#print platform.pos[0]
 #@window.event
 def controls():
     if keys == {}:
@@ -76,15 +87,17 @@ def controls():
     elif keys[key.W]:
         player_1.pos[1]+=10
     elif keys[key.A]:
-        player_1.pos[0]-=10
+        #player_1.pos[0]-=10
+        player_1.vel[0] -=1
     elif keys[key.S]:
         player_1.pos[1]-=10
     elif keys[key.D]:
-        player_1.pos[0]+=10       
+        player_1.vel[0] +=1    
     elif keys[key.ENTER]:
         pyglet.app.exit()
     #pass
     #keys = {}
+
 
 def progress():
     pass    
@@ -95,16 +108,29 @@ def update(dt):
  
 @window.event            
 def on_draw():
-    
+    print player_1.pos[1]
     global t
     window.clear()
-    #fps_display.draw()
+    fps_display.draw()
     controls()
     player_1.update()
     player_1.draw()
     platform.update()
     pass
     t +=1
+
+#@window.event       
+#def on_key_press(symbol, modifiers): 
+#    if symbol == key.A:
+#        player_1.vel[0] -=1   
+#        player_1.vel[0] -=1   
+#        player_1.vel[0] -=1   
+#@window.event       
+#def on_key_release(symbol, modifiers):
+#    if symbol == key.A:
+#        player_1.vel[0] +=1
+#        
+#        pass   
    
 pyglet.clock.schedule_interval(update, 1/60.0)    
     #pass
