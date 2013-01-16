@@ -11,10 +11,8 @@ platform_imag = pyglet.image.load('platform.jpg')
 
 keys = key.KeyStateHandler()
 window.push_handlers(keys)
-t = 1
 fps_display = pyglet.clock.ClockDisplay()
 image =  pyglet.image.load('lel.jpg')
-jemp = False
 
 def update(dt):
     return 0
@@ -32,39 +30,37 @@ class player:
         self.pp2 = [self.pos[0], self.pos[1] + self.height]
         self.pp3 = [self.pos[0], self.pp2[1] ]
         self.pp4 = [self.pp2[0], self.pp3[1]]
+        self.on_ground = True
         
     def draw(self):
         self.image.blit(self.pos[0], self.pos[1])
         
     def jemp(self):
-        self.vel[1] = min(-self.vel[1],-7)    
+        if self.on_ground == False:
+            self.vel[1] +=10   
         
         
     def update(self):
-        global jemp
         
         self.pp2 = [self.pos[0], self.pos[1] + self.height]
         self.pp3 = [self.pos[0] + self.width, self.pp2[1] ]
         self.pp4 = [self.pp3[0], self.pos[1]]
         
         self.pos[0] = (self.pos[0] + self.vel[0]) % window.width
-       
-        
-        #if jemp == True:
-            #self.vel[1] = min(-self.vel[1],-7)
-        #else:
         self.pos[1] += self.vel[1]
                  
         self.vel[0] *= .90 #friction, h66rdej6ud
         
         # POS [1] ON TEGELIKULT OBJEKTI ALUMISEST SERVAST, tee korda
         
-        if self.pos[0] >= platform.pp3[0] or self.pp3[0] <=  platform.pos[0] or self.pp4[1] > platform.pp2[1] :        
+        if self.pos[0] >= platform.pp3[0] or self.pp3[0] <=  platform.pos[0] or self.pp4[1] > platform.pp2[1] :
+            self.on_ground = True        
             #self.vel[1] = min(-self.vel[1],-1)
             if self.vel[1] > -20:
                 self.vel[1] -= 0.5              
         else:
             self.vel[1] = 0
+            self.on_ground = False
             if self.pos[1] < platform.pp2[1]:
                 self.pos[1] = platform.pp2[1]  
             
@@ -107,12 +103,9 @@ def controls():
     if keys == {}:
         pass
     elif keys[key.W]:
-        #player_1.pos[1]+=10
-        #player_1.vel[1] += 4
-        player_1.vel[1] +=2
+        player_1.jemp()
         
     elif keys[key.A]:
-        #player_1.pos[0]-=10
         player_1.vel[0] -=1
     elif keys[key.S]:
         player_1.pos[1]-=10
@@ -120,9 +113,6 @@ def controls():
         player_1.vel[0] +=1    
     elif keys[key.ENTER]:
         pyglet.app.exit()
-    #pass
-    #keys = {}
-
 
 def progress():
     pass    
@@ -130,7 +120,6 @@ def progress():
 
 @window.event            
 def on_draw():
-    global t
     pyglet.clock.tick()
     window.clear()
     fps_display.draw()
@@ -139,7 +128,6 @@ def on_draw():
     player_1.draw()
     platform.update()
     pass
-    t +=1
     pyglet.graphics.draw(2, pyglet.gl.GL_POINTS,
     ('v2i', (int(player_1.pp4[0]), int(player_1.pp4[1]), 30, 35))
     )
