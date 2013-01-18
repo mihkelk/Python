@@ -65,10 +65,18 @@ class player:
         if "on_ground" in self.collisions:
             self.vel[1] = 0    
 
-        if self.pos[0] - room_1.offset[0] < room_1.clearance[0]:
+        if self.pos[0] - room_1.offset[0] != room_1.clearance[0]:
             room_1.offset[0] = self.pos[0] - room_1.clearance[0]
         if self.pp3[0] - room_1.offset[0] > room_1.clearance[1]:
             room_1.offset[0] = self.pp3[0] - room_1.clearance[1]
+            
+        if self.pos[1] - room_1.offset[1] != room_1.clearance[2]:
+            room_1.offset[1] = self.pos[1] - room_1.clearance[2]
+            
+        #if self.pp3[1] - room_1.offset[1] > room_1.clearance[3]:
+            #room_1.offset[1] = self.pp3[1] - room_1.clearance[3]    
+            
+            
         
         
         
@@ -77,12 +85,13 @@ class player:
         
              
         print self.collisions
+        #print player_1.pos[1] 
         self.collisions = []
 class room:
     def __init__(self, width, height):
         self.width = 0
         self.height = 0
-        self.clearance = [300, 300]
+        self.clearance = [200, 200, 200, 300]
         self.offset = [0,0]
         
     def view(self, pos):
@@ -135,7 +144,8 @@ platvormod = 5
 for i in range(platvormod):
     platvorme.append(i)
     platvorme[i] = sprite([i * 200,i * 50], platform_imag)
-    print platvorme 
+    #print platvorme
+    
     
 
 
@@ -151,10 +161,21 @@ def controls():
         
     elif keys[key.A]:
         player_1.vel[0] -=1
+        #room_1.clearance[0] = 700
+        #if room_1.clearance > 700:
+            #room_1.clearance[0] += 50 
+        room_1.clearance[0] = 600
+        room_1.clearance[1] = 600
     elif keys[key.S]:
         player_1.pos[1]-=10
     elif keys[key.D]:
-        player_1.vel[0] +=1    
+        player_1.vel[0] +=1
+        #room_1.clearance[0] += 10  
+        #if room_1.clearance < 100:
+            #room_1.clearance[0] += 10 
+            
+        room_1.clearance[1] = 200
+        room_1.clearance[0] = 200    
     elif keys[key.ENTER]:
         pyglet.app.exit()
 
