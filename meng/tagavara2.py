@@ -40,7 +40,8 @@ class player:
         
         
     def update(self):
-        
+        if self.vel[1] > 0:
+            print self.vel[1]
         self.pp2 = [self.pos[0], self.pos[1] + self.height]
         self.pp3 = [self.pos[0] + self.width, self.pp2[1] ]
         self.pp4 = [self.pp3[0], self.pos[1]]
