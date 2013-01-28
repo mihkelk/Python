@@ -25,7 +25,7 @@ pyglet.clock.set_fps_limit(90)
 
 class player:
     def __init__(self, pp1, image):
-        self.pp1=[pp1[0],pp1[1]]
+        self.pp1=[int(pp1[0]),int(pp1[1])]
         self.vel=[0,0]
         self.image = pimage
         self.width = 118
@@ -34,11 +34,11 @@ class player:
         self.pp3 = [self.pp1[0], self.pp2[1]]
         self.pp4 = [self.pp2[0], self.pp3[1]]
         self.collision = False
-        self.collisions = []
+        self.collisions = [" "]
         self.jump = False
         #self.statuses = ["can_jump"]
         self.can_jump = False
-        
+        #self.vel[1] = 50
     def draw(self):
         #self.image.blit(self.pp1[0], self.pp1[1])
         self.image.blit(room_1.view(self.pp1)[0], room_1.view(self.pp1)[1])
@@ -52,10 +52,15 @@ class player:
             self.jump = True     
         
     def update(self):
+        
+        #for i in range(4):
+            #platvorme[i].update()
         #self.pp1[1] = (self.pp1[1] + self.vel[1]) 
         if self.jump == True:
             #if self.vel[1] < 10:
-            self.vel[1] += 10
+            self.vel[1] += 20
+            #self.collisions.remove("on_ground")
+            #self.vel[1] *= 0.99
             self.jump = False
         # katsetus ###################################    
         #    if self.vel[1] < 5:
@@ -74,24 +79,41 @@ class player:
         self.pp2 = [self.pp1[0], self.pp1[1] + self.height]
         self.pp3 = [self.pp1[0] + self.width, self.pp2[1] ]
         self.pp4 = [self.pp3[0], self.pp1[1]]
-               
-         
-        if "on_ground" in self.collisions:
-            self.can_jump = True
-            self.jump = False
-            self.vel[1] = 0
-        else:
-            self.can_jump = False
-            if self.vel[1] > -10:
-                self.vel[1] -= 0.5
-                print self.vel[1]
+        print self.collisions       
+        #print len(self.collisions)  
+             
+        if len(self.collisions) >=0:
+                   
+            for i in range(len(self.collisions)):
+                #print self.collisions[i]
+                if "_on_ground" in self.collisions[i]:
+                    #print self.collisions[i]
+                    self.can_jump = True
+                    self.jump = False
+                    self.vel[1] = 0
+                    pass
+                else:
+                    self.can_jump = False
+                    if self.vel[1] > -2:   
+                        self.vel[1] -= 0.5
+        #else:
+            #self.can_jump = False
+            #if self.vel[1] > -1:   
+             #   self.vel[1] -= 1
+                    
+                #else: pass
+            #print self.vel[1]
+            #self.collisions = []    
+        #self.pp1[1] = (self.pp1[1] + self.vel[1])        
                 
-        self.pp1[1] = (self.pp1[1] + self.vel[1])        
-                
-  
+        #self.collisions = []  
         in_screen(player_1, room_1)        
+        #print self.pp1[1]
+        #print platvorme[1].pp2[1]
         
-        self.collisions = []
+        
+        
+        
         #pyglet.clock.schedule_interval(update, 1.0/90.0)
         
 def in_screen(ob, room):
@@ -146,28 +168,42 @@ class sprite:
 def collide(ob1, ob2):
     
     if ob1.pp1[1] <= ob2.pp2[1] and ob1.pp2[1] > ob2.pp1[1]:
-        if (ob1.pp1[0] <= ob2.pp4[0] and ob1.pp1[0] >= ob2.pp1[0])  or (ob1.pp4[0] >=  ob2.pp1[0] and ob1.pp4[0] <= ob2.pp4[0]):
-            ob1.collision = "on_ground"
-            
+        if (ob1.pp1[0] <= ob2.pp3[0] and ob1.pp1[0] >= ob2.pp1[0])  or (ob1.pp3[0] >=  ob2.pp1[0] and ob1.pp3[0] <= ob2.pp3[0]):
+            ob1.collision = str(ob2) + "_on_ground"
+            if (str(ob2) + "_False") in ob1.collisions:
+                ob1.collisions.remove(str(ob2) + "_False")
+                
+    elif (((ob1.pp1[1] >= ob2.pp1[1]) and (ob1.pp1[1] <= ob2.pp2[1])) or ((ob1.pp2[1] <= ob2.pp2[1]) and (ob1.pp2[1] >= ob2.pp1[1]))): #or (((ob2.pp1[1] >= ob1.pp1[1]) and (ob2.pp1[1] <= ob1.pp2[1])) or ((ob2.pp2[1] <= ob1.pp2[1]) and (ob2.pp2[1] >= ob1.pp1[1]))):
+        #ob1.collision = "lel"    
+        if (ob1.pp4[0] > ob2.pp1[0]) and ob1.pp4[0] < (ob2.pp1[0] + 5): # or ob1.pp3 > ob2.pp3:
+            ob1.collision = str(ob2) + "_right_side"
+        elif(ob1.pp1[0] < ob2.pp4[0]) and (ob1.pp1[0] > ob2.pp4[0] - 5):                
+            ob1.collision = str(ob2) + "_left_side"
     else:
-        ob1.collision = "false"        
-            
+        ob1.collision = str(ob2) + "_False"
+        if str(ob2) + "_on_ground" in ob1.collisions:
+            ob1.collisions.remove(str(ob2) + "_on_ground")
             
         #if ob1.pp4[1] < ob2.pp3[1]:
             #ob1.pp1[1] = ob2.pp3[1]
             #ob1.collision = "submerged"
-    #elif (((ob1.pp1[1] >= ob2.pp1[1]) and (ob1.pp1[1] <= ob2.pp2[1])) or ((ob1.pp2[1] <= ob2.pp3[1]) and (ob1.pp2[1] >= ob2.pp1[1]))) or (((ob2.pp1[1] >= ob1.pp1[1]) and (ob2.pp1[1] <= ob1.pp2[1])) or ((ob2.pp2[1] <= ob1.pp2[1]) and (ob2.pp2[1] >= ob1.pp1[1]))):
-        #ob1.collision = "lel"    
-        #if (ob1.pp4[0] > ob2.pp1[0]) and ob1.pp4[0] < (ob2.pp4[0]): # or ob1.pp3 > ob2.pp3:
-            #ob1.collision = "right_side"        
+           
     #else:
         #ob1.collision = "false"
-        
-    #if no ""    
-    ob1.collisions.append(ob1.collision)
+    #print ob1.collision    
+    #if no ""
+    #if ob1.collision != False:
+    if ob1.collision not in ob1.collisions:
+        ob1.collisions.append(ob1.collision)
            
         #print "lel"
 
+def collision_group():
+    for i in range(4):
+        platvorme[i].update()
+        
+    #print player_1.collisions    
+    #player_1.collisions = [] 
 player_1=player([200, 200], pimage)
 room_1 = room(5,5)
 platvorme = []
@@ -220,10 +256,10 @@ def on_draw():
     controls()
     
     player_1.update()
-    for i in range(4):
-        platvorme[i].update()
+    collision_group()
 
     player_1.draw()
-    
+    #player_1.vel[1] += 0.5
+    #player_1.collisions = []
         
 pyglet.app.run()
