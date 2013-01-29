@@ -52,16 +52,11 @@ class player:
             self.jump = True     
         
     def update(self):
-        
-        #for i in range(4):
-            #platvorme[i].update()
-        #self.pp1[1] = (self.pp1[1] + self.vel[1]) 
+
         if self.jump == True:
-            #if self.vel[1] < 10:
             self.vel[1] += 10
-            #self.collisions.remove("on_ground")
-            #self.vel[1] *= 0.99
             self.jump = False
+            
         # katsetus ###################################    
         #    if self.vel[1] < 5:
         #        if self.vel[1] == 0:
@@ -72,20 +67,18 @@ class player:
         #        self.jump = False
                 
         
-        self.pp1[0] = (self.pp1[0] + self.vel[0]) #% window.width
+         #% window.width
         self.pp1[1] = (self.pp1[1] + self.vel[1])
+        if (self.vel[0] > 0 and "_right_side" in str(self.collisions)) or (self.vel[0] < 0 and "_left_side" in str(self.collisions)):
+            self.vel[0] = 0
+        self.pp1[0] = (self.pp1[0] + self.vel[0])
         self.vel[0] *= 0.90 #friction, h66rdej6ud
                  
         self.pp2 = [self.pp1[0], self.pp1[1] + self.height]
         self.pp3 = [self.pp1[0] + self.width, self.pp2[1] ]
         self.pp4 = [self.pp3[0], self.pp1[1]]
-        print self.collisions       
-        #print len(self.collisions)  
-             
-    
-                   
-        #for i in range(4):
-                #print self.collisions[i]
+        #print self.collisions       
+
         collision_group()
         gravity(self)
 
@@ -128,8 +121,8 @@ class sprite:
         self.pp4 = [self.pp3[0], self.pp1[1]]
         
         
-        def draw(self):
-            self.image.blit(room_1.view(self.pp1)[0], room_1.view(self.pp1)[1])
+    def draw(self):
+        self.image.blit(room_1.view(self.pp1)[0], room_1.view(self.pp1)[1])
         
         
     
@@ -141,13 +134,14 @@ class sprite:
         #self.pp4 = [self.pp3[0], self.pp1[1]]
         
         collide(player_1, self)
-
+        
+        
+#-----------------------------Funktsioonid-----------------------------#
 def gravity(ob):
     if "_on_ground" in str(ob.collisions):
         ob.can_jump = True
         ob.jump = False
         ob.vel[1] = 0
-            #pass
     else:
         ob.can_jump = False
         if ob.vel[1] > -20:   
@@ -166,32 +160,27 @@ def collide(ob1, ob2):
     elif (str(ob2) + "_left_side") in ob1.collisions:
         i = ob1.collisions.index(str(ob2) + "_left_side")
     
-    if ob1.pp1[1] <= ob2.pp2[1] and ob1.pp2[1] > ob2.pp1[1]:
+    if ob1.pp1[1] <= ob2.pp2[1] and ob1.pp2[1] > ob2.pp1[1] and ob1.pp1[1] > ob2.pp2[1] - 10:
         if (ob1.pp1[0] <= ob2.pp3[0] and ob1.pp1[0] >= ob2.pp1[0])  or (ob1.pp3[0] >=  ob2.pp1[0] and ob1.pp3[0] <= ob2.pp3[0]):
             status = "_on_ground"
                 
-    elif (((ob1.pp1[1] >= ob2.pp1[1]) and (ob1.pp1[1] <= ob2.pp2[1])) or ((ob1.pp2[1] <= ob2.pp2[1]) and (ob1.pp2[1] >= ob2.pp1[1]))): #or (((ob2.pp1[1] >= ob1.pp1[1]) and (ob2.pp1[1] <= ob1.pp2[1])) or ((ob2.pp2[1] <= ob1.pp2[1]) and (ob2.pp2[1] >= ob1.pp1[1]))):   
-        if (ob1.pp4[0] > ob2.pp1[0]) and ob1.pp4[0] < (ob2.pp1[0] + 5): # or ob1.pp3 > ob2.pp3:
+    elif (ob1.pp1[1] >= ob2.pp1[1] and ob1.pp1[1] <= ob2.pp2[1]) or (ob1.pp2[1] <= ob2.pp2[1] and ob1.pp2[1] >= ob2.pp1[1]) or (ob2.pp1 >= ob1.pp1[1] and ob2.pp1[1] <= ob1.pp2[1]) or (ob2.pp2[1] <= ob1.pp2[1] and ob2.pp2[1] >= ob1.pp1[1]):
+        #status = "_left_side"
+        if (ob1.pp4[0] >= ob2.pp1[0]) and ob1.pp4[0] < (ob2.pp1[0] + 10): # or ob1.pp3 > ob2.pp3:
             status = "_right_side"
-        elif(ob1.pp1[0] < ob2.pp4[0]) and (ob1.pp1[0] > ob2.pp4[0] - 5):                
+        elif(ob1.pp1[0] <= ob2.pp4[0]) and (ob1.pp1[0] > ob2.pp4[0] - 10):                
             status = "_left_side"
     else:
         status = "_False"
     
     ob1.collisions[i] = str(ob2) + status
-    
-    #if ob1.collision not in ob1.collisions:
-    #    ob1.collisions.append(ob1.collision)
-           
-        #print "lel"
 
 def collision_group():
     for i in range(platvormod):
         platvorme[i].update()
-        platvorme[i].image.blit(room_1.view(platvorme[i].pp1)[0], room_1.view(platvorme[i].pp1)[1])
-        
-    #print player_1.collisions    
-    #player_1.collisions = [] 
+        platvorme[i].draw()
+#----------------------------------------------------------------------#
+#-----------------------------Loomine----------------------------------#        
 player_1=player([200, 200], pimage)
 room_1 = room(5,5)
 platvorme = []
@@ -201,13 +190,9 @@ for i in range(platvormod):
     platvorme.append(i)
     platvorme[i] = sprite([(i+1) * 200,(i+1) * 50], platform_imag)
     player_1.collisions.append(str(platvorme[i]) + "_False")
-    
-print player_1.collisions
-
+#----------------------------------------------------------------------#
 def controls():
-    #global jemp
-    #if keys == {}:
-        #pass
+
     if keys[key.W]:
         
         if player_1.jump == True:
@@ -224,6 +209,7 @@ def controls():
     elif keys[key.S]:
         player_1.pp1[1]-=10
     elif keys[key.D]:
+        print str(player_1.collisions)
         player_1.vel[0] +=1
         if room_1.clearance[0] > 300:
             room_1.clearance[0] -= 10
@@ -232,21 +218,19 @@ def controls():
     elif keys[key.ENTER]:
         pyglet.app.exit()
 
-def progress():
-    pass    
- 
-
 @window.event            
 def on_draw():
+    
     pyglet.clock.tick()
     window.clear()
+
     fps_display.draw()
     
     controls()
     
     player_1.update()
     #collision_group()
-
+    
     player_1.draw()
     #player_1.vel[1] += 0.5
     #player_1.collisions = []
