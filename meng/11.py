@@ -54,8 +54,22 @@ class player:
     def update(self):
 
         if self.jump == True:
-            self.vel[1] += 10
+            #self.vel[1] += 10
+            #self.jump = False
+            for i in range(20):
+                if "_on_top" not in str(self.collisions):
+                    self.vel[1] += 0.5
+            #        self.jump = False
+                elif "_on_top" in str(self.collisions):
+                    self.jump = False
+              
             self.jump = False
+            #if "_on_top" in str(self.collisions):
+            #    self.vel[1] = 0
+            #    self.jump = False
+            #else:    
+            #    self.vel[1] += 10
+            #    self.jump = False
             
         # katsetus ###################################    
         #    if self.vel[1] < 5:
@@ -66,9 +80,10 @@ class player:
         #    else:    
         #        self.jump = False
                 
-        
+        if "_on_top" in str(self.collisions) and "_on_ground" not in str(self.collisions):
+            self.vel[1] = -1
          #% window.width
-        self.pp1[1] = (self.pp1[1] + self.vel[1])
+        self.pp1[1] = (self.pp1[1] + self.vel[1]) #% (window.height +100)
         if (self.vel[0] > 0 and "_right_side" in str(self.collisions)) or (self.vel[0] < 0 and "_left_side" in str(self.collisions)):
             self.vel[0] = 0
         self.pp1[0] = (self.pp1[0] + self.vel[0])
@@ -120,6 +135,7 @@ class sprite:
         self.pp3 = [self.pp1[0] + self.width, self.pp2[1] ]
         self.pp4 = [self.pp3[0], self.pp1[1]]
         
+        player_1.collisions.append(str(self) + "_False")
         
     def draw(self):
         self.image.blit(room_1.view(self.pp1)[0], room_1.view(self.pp1)[1])
@@ -149,8 +165,11 @@ def gravity(ob):
         
 def collide(ob1, ob2):
     status = "_False"
-    time = 1
-    print ob1.collisions
+    Vtime = 1
+    RHtime = 1
+    LHtime = 1
+    UVtime = 1
+    #print ob1.collisions
     if (str(ob2) + "_False") in ob1.collisions:
         i = ob1.collisions.index(str(ob2) + "_False")
     elif (str(ob2) + "_on_ground") in ob1.collisions:
@@ -159,35 +178,60 @@ def collide(ob1, ob2):
         i = ob1.collisions.index(str(ob2) + "_right_side")    
     elif (str(ob2) + "_left_side") in ob1.collisions:
         i = ob1.collisions.index(str(ob2) + "_left_side")
+    elif (str(ob2) + "_on_top") in ob1.collisions:
+        i = ob1.collisions.index(str(ob2) + "_on_top")
+            
         
-    speed = ob1.vel[1] + -0.5
-    distance = ob2.pp2[1] - ob1.pp1[1]
-    if speed != 0:
-        time = distance / speed        
+        
+    #----------Kiirused-kontrollideks----------#   
+    Vspeed = ob1.vel[1] + -0.5
+    Vdistance = ob2.pp2[1] - ob1.pp1[1]
+    if Vspeed != 0:
+        Vtime = Vdistance / Vspeed
+        
+    UVspeed = ob1.vel[1] + -5
+    UVdistance = ob2.pp1[1] - ob1.pp2[1]
+    if UVspeed != 0:
+        UVtime = UVdistance / UVspeed    
+        
+    RHspeed = ob1.vel[0] + 1
+    RHdistance = ob2.pp1[0] - ob1.pp4[0]
+    if RHspeed != 0:
+        RHtime = RHdistance / RHspeed
+        
+    LHspeed = ob1.vel[0] - 1    
+    LHdistance = ob2.pp4[0] - ob1.pp1[0]    
+    if LHspeed !=0:
+        LHtime = LHdistance / LHspeed    
+        
+                     
     #print time
-    if time >= 0 and time < 1: #or time == 0:
-        #print "nyyd"
-    #    status = "_on_ground"
-    #elif time == 0:
-    #    status = "_on_ground"  
+     #or time == 0:
     #if ob1.pp1[1] <= ob2.pp2[1] and ob1.pp2[1] > ob2.pp2[1] and ob1.pp1[1] > ob2.pp2[1] - 10:
-        if (ob1.pp1[0] <= ob2.pp3[0] and ob1.pp1[0] >= ob2.pp1[0])  or (ob1.pp3[0] >=  ob2.pp1[0] and ob1.pp3[0] <= ob2.pp3[0]):
+    if (ob1.pp1[0] <= ob2.pp3[0] and ob1.pp1[0] >= ob2.pp1[0])  or (ob1.pp3[0] >=  ob2.pp1[0] and ob1.pp3[0] <= ob2.pp3[0]):
+        if Vtime >= 0 and Vtime < 1:
             status = "_on_ground"
-            #if time > 0 and time < 1:
-                #status = "_on_ground"
-            #elif time == 0:
-                #status = "_on_ground"
-                #ob1.vel[1] = 1
+        elif UVtime >= 0 and UVtime < 1:
+        #if (ob1.pp1[0] <= ob2.pp3[0] and ob1.pp1[0] >= ob2.pp1[0])  or (ob1.pp3[0] >=  ob2.pp1[0] and ob1.pp3[0] <= ob2.pp3[0]):
+            status = "_on_top"
+            #ob1.vel[1] = 0
+            #print ob1.collisions
+            #print "el oh el"
+    elif ob1.pp2[1] < ob2.pp1[1] or ob1.pp1[1] > ob2.pp2[1]: # Kui objekt asub teisest objektist korgemal voi madalamal polegi mottet edasi kontrollida.
+        pass            
                 
     #elif (ob1.pp1[1] >= ob2.pp1[1] and ob1.pp1[1] <= ob2.pp2[1]) or (ob1.pp2[1] <= ob2.pp2[1] and ob1.pp2[1] >= ob2.pp1[1]) or (ob2.pp1 >= ob1.pp1[1] and ob2.pp1[1] <= ob1.pp2[1]) or (ob2.pp2[1] <= ob1.pp2[1] and ob2.pp2[1] >= ob1.pp1[1]):
+  
     #    #status = "_left_side"
+    elif RHtime >=0 and RHtime <1:
     #    if (ob1.pp4[0] >= ob2.pp1[0]) and ob1.pp4[0] < (ob2.pp1[0] + 10): # or ob1.pp3 > ob2.pp3:
-    #        status = "_right_side"
+        status = "_right_side"
     #    elif(ob1.pp1[0] <= ob2.pp4[0]) and (ob1.pp1[0] > ob2.pp4[0] - 10):                
     #        status = "_left_side"
     #else:
         #status = "_False"
-        
+    elif LHtime >=0 and LHtime <1:
+        status = "_left_side"    
         
     #speed = ob1.vel[1] + -0.5
     #distance = ob2.pp2[1] - ob1.pp1[1]
@@ -197,7 +241,7 @@ def collide(ob1, ob2):
     ob1.collisions[i] = str(ob2) + status
 
 def collision_group():
-    for i in range(platvormod):
+    for i in range(len(platvorme)):
         platvorme[i].update()
         platvorme[i].draw()
 #----------------------------------------------------------------------#
@@ -210,7 +254,13 @@ platvormod = 3
 for i in range(platvormod):
     platvorme.append(i)
     platvorme[i] = sprite([(i+1) * 200,(i+1) * 50], platform_imag)
-    player_1.collisions.append(str(platvorme[i]) + "_False")
+    #player_1.collisions.append(str(platvorme[i]) + "_False")
+    
+vasak_testiplatvorm = sprite([1,100], platform_imag)
+ylemine_testiplatvorm = sprite([200,300], platform_imag)
+platvorme.append(vasak_testiplatvorm)
+platvorme.append(ylemine_testiplatvorm)  
+print platvorme 
 #----------------------------------------------------------------------#
 def controls():
 
@@ -219,7 +269,8 @@ def controls():
         if player_1.jump == True:
             pass
         else:
-            player_1.jemp()
+            if "_on_top" not in str(player_1.collisions):
+                player_1.jemp()
         
     elif keys[key.A]:
         player_1.vel[0] -=1
@@ -230,7 +281,7 @@ def controls():
     elif keys[key.S]:
         player_1.pp1[1]-=10
     elif keys[key.D]:
-        print str(player_1.collisions)
+        #print str(player_1.collisions)
         player_1.vel[0] +=1
         if room_1.clearance[0] > 300:
             room_1.clearance[0] -= 10
