@@ -51,25 +51,37 @@ class player:
         if self.can_jump == True:
             self.jump = True
             
-        if self.jump == True:
+            if self.jump == True:
+                if "_on_top" not in str(self.collisions):
+                    self.vel[1] += 10
+                    #        self.jump = False
+                else: #"_on_top" in str(self.collisions):
+                    self.jump = False
+                    self.can_jump = False
+                            #self.vel[1] = -100     
+        
+    def update(self):
+        
+        if "_on_top" in str(self.collisions) and "_on_ground" not in str(self.collisions): # <- TAHTIS, JALGI SEDA
+                self.vel[1] = -1
+                self.can_jump = False
+
+        #if self.jump == True:
             #print self.collisions
             #self.vel[1] += 10
             #self.jump = False
             #if "_on_top" not in str(self.collisions):
-            if "_on_top" not in str(self.collisions):
-                self.vel[1] += 50
-                   #        self.jump = False
-            if "_on_top" in str(self.collisions):
-                self.jump = False
-                self.can_jump = False
-                        #self.vel[1] = -100
+            #    if self.vel[1] < 10:
+            #        if "_on_top" not in str(self.collisions):
+            #            self.vel[1] += 1
+                #        self.jump = False
+           #         if "_on_top" in str(self.collisions):
+           #             self.jump = False
+           #             self.can_jump = False
+           #             self.vel[1] = -100
                   
-            else:
-                self.jump = False        
-        
-    def update(self):
-
-
+                #else:
+                    #self.jump = False
             #if "_on_top" in str(self.collisions):
             #    self.vel[1] = 0
             #    self.jump = False
@@ -86,11 +98,10 @@ class player:
         #    else:    
         #        self.jump = False
                 
-        if "_on_top" in str(self.collisions) and "_on_ground" not in str(self.collisions):
-            self.vel[1] = -1
-            self.can_jump = False
-            
-        self.pp1[1] = (self.pp1[1] + self.vel[1]/10) #% (window.height +100)
+        #if "_on_top" in str(self.collisions) and "_on_ground" not in str(self.collisions):
+           # self.vel[1] = 1
+         #% window.width
+        self.pp1[1] = (self.pp1[1] + self.vel[1]) #% (window.height +100)
         if (self.vel[0] > 0 and "_right_side" in str(self.collisions)) or (self.vel[0] < 0 and "_left_side" in str(self.collisions)):
             self.vel[0] = 0
         self.pp1[0] = (self.pp1[0] + self.vel[0])
@@ -200,8 +211,7 @@ def collide(ob1, ob2):
     UVdistance = ob2.pp1[1] - ob1.pp2[1]
     if UVspeed != 0:
         UVtime = UVdistance / UVspeed    
-    #print UVtime
-    #print UVdistance    
+        
     RHspeed = ob1.vel[0] + 1
     RHdistance = ob2.pp1[0] - ob1.pp4[0]
     if RHspeed != 0:
@@ -213,6 +223,8 @@ def collide(ob1, ob2):
         LHtime = LHdistance / LHspeed    
         
                      
+    #print time
+     #or time == 0:
     #if ob1.pp1[1] <= ob2.pp2[1] and ob1.pp2[1] > ob2.pp2[1] and ob1.pp1[1] > ob2.pp2[1] - 10:
     if (ob1.pp1[0] <= ob2.pp3[0] and ob1.pp1[0] >= ob2.pp1[0])  or (ob1.pp3[0] >=  ob2.pp1[0] and ob1.pp3[0] <= ob2.pp3[0]):
         if Vtime >= 0 and Vtime < 1:
@@ -220,7 +232,6 @@ def collide(ob1, ob2):
         elif UVtime >= 0 and UVtime < 1:
         #if (ob1.pp1[0] <= ob2.pp3[0] and ob1.pp1[0] >= ob2.pp1[0])  or (ob1.pp3[0] >=  ob2.pp1[0] and ob1.pp3[0] <= ob2.pp3[0]):
             status = "_on_top"
-            #print "its happening"
             #ob1.vel[1] = 0
             #print ob1.collisions
             #print "el oh el"
@@ -272,15 +283,12 @@ print platvorme
 def controls():
 
     if keys[key.W]:
-        #if "_on_top" not in str(player_1.collisions):
-            #player_1.vel[1] += 3
-        #else:
-            #player_1.vel[1] = 0
+        
         if player_1.jump == True:
             pass
         else:
-            #if "_on_top" not in str(player_1.collisions):
-            player_1.jemp()
+            if "_on_top" not in str(player_1.collisions):
+                player_1.jemp()
         
     elif keys[key.A]:
         player_1.vel[0] -=1
@@ -305,7 +313,7 @@ def on_draw():
     
     pyglet.clock.tick()
     window.clear()
-    #player_1.draw()
+
     fps_display.draw()
     
     controls()
@@ -314,8 +322,6 @@ def on_draw():
     #collision_group()
     
     player_1.draw()
-    
-    #print player_1.collisions
     #player_1.vel[1] += 0.5
     #player_1.collisions = []
         
