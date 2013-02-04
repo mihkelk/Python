@@ -224,16 +224,17 @@ def collide(ob1, ob2): # kokkupuudete kontrolli funktsioon
     if (ob1.pp1[0] <= ob2.pp3[0] and ob1.pp1[0] >= ob2.pp1[0])  or (ob1.pp3[0] >=  ob2.pp1[0] and ob1.pp3[0] <= ob2.pp3[0]):
         if Vtime >= 0 and Vtime < 1:    # ennetav kokkupuutekontroll, tapsem kui punktide kasutamine
             status = "_on_ground"
+            ob1.pp1[1] = ob2.pp2[1] + 0.05
         elif UVtime >= 0 and UVtime < 1:
             status = "_on_top"
 
     elif ob1.pp2[1] < ob2.pp1[1] or ob1.pp1[1] > ob2.pp2[1]: # Kui objekt asub teisest objektist korgemal
         pass                                                 # siis lopetatakse funktsioon siinsamas. 
-  
+
     elif RHtime >=0 and RHtime <1:
-        status = "_right_side"
+            status = "_right_side"
     elif LHtime >=0 and LHtime <1:
-        status = "_left_side"    
+            status = "_left_side"    
         
 
     ob1.collisions[i] = str(ob2) + status # esimese objekti kokkupuudete nimekirja kohal i asuv vaartus muudetakse stringiks mis koosneb objekti nimest ja kokkupuute tyybist
@@ -249,10 +250,6 @@ player_1=player([200, 100], pimage) # loob mangja, kasutades player klassi ning 
 room_1 = room(5,5)
 room_2 = room(5,5)
 
-#platvormid = []
-
-
-#room_1 = room(5,5)
 room.creation(room_1)
 room.creation(room_2)
 
@@ -261,7 +258,7 @@ current_room = room_1
  
 #----------------------------------------------------------------------#
 def controls():                                                     # nupuvajutused
-
+    global current_room
     if keys[key.W]:                 
         if player_1.jump == True:
             pass
@@ -279,7 +276,13 @@ def controls():                                                     # nupuvajutu
     elif keys[key.D]:
         player_1.vel[0] +=1                                          # suurendab horisontaalset kiirust 1 v6rra
         player_1.facing = "right"
-
+        
+    elif keys[key._1]:
+        current_room = room_1
+        
+    elif keys[key._2]:
+        current_room = room_2    
+        
             
     elif keys[key.ENTER]:
         pyglet.app.exit()                                            # sulgeb programmi
