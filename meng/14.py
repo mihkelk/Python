@@ -38,9 +38,14 @@ class player:                                                   # mangjaklassi l
         self.pp3 = [self.pp1[0], self.pp2[1]]                   # kolmanda punkti koordinaadid        
         self.pp4 = [self.pp2[0], self.pp3[1]]                   # neljanda punkti koordinaadid    
         self.collisions = []                                    # kokkupuutumiste nimekirja loomine
-        self.jump = False                                       # objekti luues ta parasjagu ei hyppa
+        self.jump = False
+                                               # objekti luues ta parasjagu ei hyppa
         self.can_jump = False                                   # loomise hetkel ei tohi objekt hyppata
-        self.facing = "right"                                   # luues on objekt naoga paremale    
+        self.facing = "right"
+        self.att = False
+        
+        self.att_pos = [0,0]
+                                           # luues on objekt naoga paremale    
     def draw(self):                                                         # objekti joonistamise funktsioon
         self.image.blit(room_1.view(self.pp1)[0], room_1.view(self.pp1)[1]) # joonistab pildifaili koordinaatidele
         #i_pp1.blit(room_1.view(self.pp1)[0], room_1.view(self.pp1)[1])     # need olid nurkade asukohakoordinaatide tapsuse kontrollimiseks   
@@ -59,7 +64,54 @@ class player:                                                   # mangjaklassi l
                 else:
                     self.jump = False
                     self.can_jump = False
- 
+                    
+    def attack(self):
+        
+        if self.facing == "right":
+            dir_p = self.pp3[0]
+            att_dist = 20
+            att_mid_dist = 40
+        elif self.facing == "left":
+            dir_p = self.pp2[0]
+            att_dist = -20   
+            att_mid_dist = -40
+            
+        if keys[key.UP]:
+            player_1.att = "up"
+        
+        elif keys[key.RIGHT]:
+            if self.facing == "right":
+                player_1.att = "mid"
+            else:
+                self.att = "back"
+                
+        elif keys[key.LEFT]:
+            if self.facing == "left":
+                player_1.att = "mid"
+            else:
+                self.att = "back"         
+            
+        elif keys[key.DOWN]:
+            player_1.att = "low"    
+            
+        
+        if self.att == False:
+            pass
+        self.att_pos[0] = dir_p + att_dist
+        if self.att == "up":
+            self.att_pos[1] = self.pp3[1]
+            print "up"
+            ##
+        if self.att == "mid":
+            self.att_pos[0] = dir_p + att_mid_dist
+            self.att_pos[1] = self.pp3[1] - self.height / 2
+            print "mid"
+            ##
+        if self.att == "low":
+            self.att_pos[1] = self.pp4[1]
+            print "low"
+            ##                    
+        i_pp1.blit(room_1.view(self.att_pos)[0], room_1.view(self.att_pos)[1]) # joonista ryndepunkt
         
     def update(self):   # mangja uuendamine
         
@@ -80,7 +132,8 @@ class player:                                                   # mangjaklassi l
         collision_group()
         gravity(self)
 
-        in_screen(player_1, room_1)             
+        in_screen(player_1, room_1)
+        self.attack()             
 
 def in_screen(ob, room):    # funktsioon mis t6lgendab koordinaate ekraanikoordinaatideks
         if ob.pp1[0] - room.offset[0] != room.clearance[0]:
@@ -90,6 +143,8 @@ def in_screen(ob, room):    # funktsioon mis t6lgendab koordinaate ekraanikoordi
             
         if ob.pp1[1] - room.offset[1] != room.clearance[2]:
             room.offset[1] = ob.pp1[1] - room.clearance[2]
+          
+          
             
         
 class room:
@@ -286,6 +341,16 @@ def controls():                                                     # nupuvajutu
             
     elif keys[key.ENTER]:
         pyglet.app.exit()                                            # sulgeb programmi
+        
+ #   if keys[key.UP]:
+ #       player_1.att = "up"
+ #       
+ #   elif keys[key.RIGHT]:
+ #       player_1.att = "up"
+ #       
+ #   if keys[key.UP]:
+ #       player_1.att = "up"
+                                                                        
 
 @window.event            
 def on_draw():  # mis toimub iga kaadri jooksul
