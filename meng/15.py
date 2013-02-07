@@ -66,7 +66,8 @@ class player:                                                   # mangjaklassi l
                     self.can_jump = False
                     
     def attack(self):
-        
+        first_dir_key = "none"
+        #self.att = False
         #self.att = False
         if self.facing == "right":
             dir_p = self.pp3[0]
@@ -84,33 +85,41 @@ class player:                                                   # mangjaklassi l
                 keys_true += 1  
             
         #if keys[key.DOWN] == False and keys[key.LEFT] == False and keys[key.RIGHT] == False:    
-        
-        if keys[key.UP]:
-            if keys_true == 1:
+        if keys_true == 1:
+            if keys[key.UP]:
+                first_dir_key = "up"
                 player_1.att = "stab_up"
-                print "stab_up"
-            #print "lelel"
-        
-        elif keys[key.RIGHT]:
-            if self.facing == "right":
-                if keys_true == 1:
+     
+            elif keys[key.RIGHT]:
+                first_dir_key = "right"
+                if self.facing == "right":                   
+                        player_1.att = "stab_mid"                        
+                    
+                else:
+                        self.att = "stab_back"                    
+            elif keys[key.LEFT]:
+                first_dir_key = "left"
+                if self.facing == "left":
                     player_1.att = "stab_mid"
-                if (keys[key.RIGHT] and keys[key.UP]):
-                    player_1.att = "slash_mid_up"
-                    print "slash_mid_up"
+                else:
+                    self.att = "stab_back"         
                 
-            else:
-                if keys_true == 1:
-                    self.att = "stab_back"
-                
-        elif keys[key.LEFT]:
-            if self.facing == "left":
-                player_1.att = "mid"
-            else:
-                self.att = "back"         
+            elif keys[key.DOWN]:
+                first_dir_key = "down"
+                player_1.att = "stab_low" 
+ 
             
-        elif keys[key.DOWN]:
-            player_1.att = "low"    
+        if keys_true > 1:
+            if (keys[key.RIGHT] and keys[key.UP]):
+                
+                if self.facing == "right":
+                    if first_dir_key == "right":
+                        player_1.att = "slash_mid_up"
+    
+                    elif first_dir_key == "up":
+                        player_1.att = "slash_up_mid"
+   
+        print self.att                       
             
         #print keys
         if self.att == False:
@@ -131,7 +140,7 @@ class player:                                                   # mangjaklassi l
             ##                    
         i_pp1.blit(room_1.view(self.att_pos)[0], room_1.view(self.att_pos)[1]) # joonista ryndepunkt
         #print self.att
-        print keys
+        #print keys
     def update(self):   # mangja uuendamine
         
         if "_on_top" in str(self.collisions) and "_on_ground" not in str(self.collisions): # kui objekti ylemine serv puudutab midagi ja alumine parasjagu ei puuduta
