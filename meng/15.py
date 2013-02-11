@@ -1,5 +1,6 @@
 
 import pyglet
+import math
 from pyglet.window import key
 
     
@@ -19,7 +20,9 @@ i_pp4 = pyglet.image.load('pp4.jpg')
 platform_imag = pyglet.image.load('platform.jpg')
 #------------------------------------------------#
 
-
+def angle(ang):
+    return [math.cos(ang), math.sin(ang)]
+    
 
 def update(dt): # vajalik jargneva kahe kasu jaoks
     return 0
@@ -36,7 +39,9 @@ class player:                                                   # mangjaklassi l
         self.height = 125                                       # k6rgus    
         self.pp2 = [self.pp1[0], self.pp1[1] + self.height]     # teise punkti koordinaadid
         self.pp3 = [self.pp1[0], self.pp2[1]]                   # kolmanda punkti koordinaadid        
-        self.pp4 = [self.pp2[0], self.pp3[1]]                   # neljanda punkti koordinaadid    
+        self.pp4 = [self.pp2[0], self.pp3[1]]                   # neljanda punkti koordinaadid 
+        self.center = [self.pp1[0] + (self.width/2), self.pp1[1] + self.height/2]
+                              
         self.collisions = []                                    # kokkupuutumiste nimekirja loomine
         self.jump = False
                                                # objekti luues ta parasjagu ei hyppa
@@ -44,8 +49,10 @@ class player:                                                   # mangjaklassi l
         self.facing = "right"                   # luues on objekt naoga paremale  
         self.att = False
         
-        self.att_pos = [0,0]
         
+        self.att_pos = [0,0]
+        self.att_angle = 0
+        self.att_vel = [0, 0]
         self.first_dir_key = "none"
                                              
     def draw(self):                                                         # objekti joonistamise funktsioon
@@ -54,6 +61,7 @@ class player:                                                   # mangjaklassi l
         #i_pp2.blit(room_1.view(self.pp2)[0], room_1.view(self.pp2)[1])
         #i_pp3.blit(room_1.view(self.pp3)[0], room_1.view(self.pp3)[1])
         #i_pp4.blit(room_1.view(self.pp4)[0], room_1.view(self.pp4)[1])
+        i_pp4.blit(room_1.view(self.center)[0], room_1.view(self.center)[1])
         
     def jemp(self):                                         # hyppamisfunktsioon
         if self.can_jump == True:                           # kas tohib hyppata?
@@ -121,29 +129,57 @@ class player:                                                   # mangjaklassi l
     
                     elif self.first_dir_key == "up":
                         player_1.att = "slash_up_mid"
+                        
+                #elif self.facing == "left":        
    
-        print self.att                       
+            if keys[key.LEFT] and keys[key.UP]:
+                if self.facing == "left":
+                    if self.first_dir_key == "left":
+                        player_1.att = "slash_mid_up"
+    
+                    elif self.first_dir_key == "up":
+                        player_1.att = "slash_up_mid"
+                        
+            if keys[key.UP] and keys[key.DOWN]:
+                if self.first_dir_key == "up":
+                    self.att = "slash_up_down"
+                elif self.first_dir_key == "down":
+                    self.att = "slash_down_up"
+                                    
+                                 
+        #print self.att                       
             
         #print keys
         if self.att == False:
             pass
         self.att_pos[0] = dir_p + att_dist
         if self.att == "stab_up":
-            self.att_pos[1] = self.pp3[1]
+            self.att_angle = 250
+            #self.att_pos[1] = self.pp3[1]
             #print "up"
             ##
         if self.att == "stab_mid":
-            self.att_pos[0] = dir_p + att_mid_dist
-            self.att_pos[1] = self.pp3[1] - self.height / 2
+            #self.att_pos[0] = dir_p + att_mid_dist
+            #self.att_pos[1] = self.pp3[1] - self.height / 2
+            self.att_angle = 10
             #print "mid"
             ##
-        if self.att == "stab_low":
-            self.att_pos[1] = self.pp4[1]
+        #if self.att == "stab_low":
+            #self.att_pos[1] = self.pp4[1]
             #print "low"
-            ##                    
+            ## 
+        self.att_vel[0] +=   angle(self.att_angle)[0] * 0.1
+        self.att_vel[1] +=   angle(self.att_angle)[1] * 0.1 
+        self.att_pos[0] += self.center[0] + self.att_vel[0] + 100
+        self.att_pos[1] += self.center[1] + self.att_vel[1] + 100
+        print self.att_pos
+                               
         i_pp1.blit(room_1.view(self.att_pos)[0], room_1.view(self.att_pos)[1]) # joonista ryndepunkt
         #print self.att
         #print keys
+        
+        
+        
     def update(self):   # mangja uuendamine
         
         if "_on_top" in str(self.collisions) and "_on_ground" not in str(self.collisions): # kui objekti ylemine serv puudutab midagi ja alumine parasjagu ei puuduta
@@ -158,7 +194,9 @@ class player:                                                   # mangjaklassi l
                  
         self.pp2 = [self.pp1[0], self.pp1[1] + self.height]
         self.pp3 = [self.pp1[0] + self.width, self.pp2[1] ]
-        self.pp4 = [self.pp3[0], self.pp1[1]]      
+        self.pp4 = [self.pp3[0], self.pp1[1]] 
+        
+        self.center = [self.pp1[0] + (self.width/2), self.pp1[1] + self.height/2]     
 
         collision_group()
         gravity(self)
