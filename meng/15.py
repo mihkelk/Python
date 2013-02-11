@@ -21,7 +21,15 @@ platform_imag = pyglet.image.load('platform.jpg')
 #------------------------------------------------#
 
 def angle(ang):
-    return [math.cos(ang), math.sin(ang)]
+    cos = math.cos(math.radians(ang))
+    sin = math.sin(math.radians(ang))
+    #if cos < 0:
+        #cos *= -1
+    #if ang > 0:    
+    #if sin < 0:
+    #    sin *= -1    
+        
+    return [cos, sin]
     
 
 def update(dt): # vajalik jargneva kahe kasu jaoks
@@ -54,6 +62,7 @@ class player:                                                   # mangjaklassi l
         self.att_angle = 0
         self.att_vel = [0, 0]
         self.first_dir_key = "none"
+        self.spear_rad = 100
                                              
     def draw(self):                                                         # objekti joonistamise funktsioon
         self.image.blit(room_1.view(self.pp1)[0], room_1.view(self.pp1)[1]) # joonistab pildifaili koordinaatidele
@@ -154,30 +163,45 @@ class player:                                                   # mangjaklassi l
             pass
         self.att_pos[0] = dir_p + att_dist
         if self.att == "stab_up":
-            self.att_angle = 250
+            self.att_angle = 10
             #self.att_pos[1] = self.pp3[1]
             #print "up"
             ##
         if self.att == "stab_mid":
-            #self.att_pos[0] = dir_p + att_mid_dist
-            #self.att_pos[1] = self.pp3[1] - self.height / 2
-            self.att_angle = 10
+            self.att_angle = 0
+        elif self.att == "stab_low":
+            self.att_angle = -10
+        
             #print "mid"
             ##
         #if self.att == "stab_low":
             #self.att_pos[1] = self.pp4[1]
             #print "low"
             ## 
-        self.att_vel[0] +=   angle(self.att_angle)[0] * 0.1
-        self.att_vel[1] +=   angle(self.att_angle)[1] * 0.1 
-        self.att_pos[0] += self.center[0] + self.att_vel[0] + 100
-        self.att_pos[1] += self.center[1] + self.att_vel[1] + 100
-        print self.att_pos
-                               
+        self.att_vel[0] =   angle(self.att_angle)[0] #* .1
+        self.att_vel[1] =   angle(self.att_angle)[1] #* .1 
+        
+        #if self.att_vel[0] < 0:
+        #    self.att_vel[0] *= -1
+             
+        #if self.att_vel[1] < 0:
+        #    self.att_vel[1] *= -1     
+        
+        
+        self.att_pos[0] = self.center[0] + self.spear_rad * self.att_vel[0] #+ 100
+        self.att_pos[1] = self.center[1] + self.spear_rad * self.att_vel[1] #+ 100
+        #print self.att_pos
+        #print self.spear_rad * self.att_vel[0]
+        #print self.att_vel[0]
+        #print math.sin(-10) #* - .1
+        #print math.degrees(10)
+        #print self.center
+        #print self.att_pos
+        print angle(-10)                      
         i_pp1.blit(room_1.view(self.att_pos)[0], room_1.view(self.att_pos)[1]) # joonista ryndepunkt
         #print self.att
         #print keys
-        
+        #print self.att_pos
         
         
     def update(self):   # mangja uuendamine
