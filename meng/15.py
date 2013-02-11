@@ -41,11 +41,13 @@ class player:                                                   # mangjaklassi l
         self.jump = False
                                                # objekti luues ta parasjagu ei hyppa
         self.can_jump = False                                   # loomise hetkel ei tohi objekt hyppata
-        self.facing = "right"
+        self.facing = "right"                   # luues on objekt naoga paremale  
         self.att = False
         
         self.att_pos = [0,0]
-                                           # luues on objekt naoga paremale    
+        
+        self.first_dir_key = "none"
+                                             
     def draw(self):                                                         # objekti joonistamise funktsioon
         self.image.blit(room_1.view(self.pp1)[0], room_1.view(self.pp1)[1]) # joonistab pildifaili koordinaatidele
         #i_pp1.blit(room_1.view(self.pp1)[0], room_1.view(self.pp1)[1])     # need olid nurkade asukohakoordinaatide tapsuse kontrollimiseks   
@@ -66,8 +68,9 @@ class player:                                                   # mangjaklassi l
                     self.can_jump = False
                     
     def attack(self):
-        first_dir_key = "none"
+        #first_dir_key = "none"
         #self.att = False
+        #first_dir_key
         #self.att = False
         if self.facing == "right":
             dir_p = self.pp3[0]
@@ -87,25 +90,25 @@ class player:                                                   # mangjaklassi l
         #if keys[key.DOWN] == False and keys[key.LEFT] == False and keys[key.RIGHT] == False:    
         if keys_true == 1:
             if keys[key.UP]:
-                first_dir_key = "up"
+                self.first_dir_key = "up"
                 player_1.att = "stab_up"
      
             elif keys[key.RIGHT]:
-                first_dir_key = "right"
+                self.first_dir_key = "right"
                 if self.facing == "right":                   
                         player_1.att = "stab_mid"                        
                     
                 else:
                         self.att = "stab_back"                    
             elif keys[key.LEFT]:
-                first_dir_key = "left"
+                self.first_dir_key = "left"
                 if self.facing == "left":
                     player_1.att = "stab_mid"
                 else:
                     self.att = "stab_back"         
                 
             elif keys[key.DOWN]:
-                first_dir_key = "down"
+                self.first_dir_key = "down"
                 player_1.att = "stab_low" 
  
             
@@ -113,10 +116,10 @@ class player:                                                   # mangjaklassi l
             if (keys[key.RIGHT] and keys[key.UP]):
                 
                 if self.facing == "right":
-                    if first_dir_key == "right":
+                    if self.first_dir_key == "right":
                         player_1.att = "slash_mid_up"
     
-                    elif first_dir_key == "up":
+                    elif self.first_dir_key == "up":
                         player_1.att = "slash_up_mid"
    
         print self.att                       
