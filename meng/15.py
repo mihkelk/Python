@@ -90,21 +90,18 @@ class player:                                                   # mangjaklassi l
         #first_dir_key
         #self.att = False
         if self.facing == "right":
-            dir_p = self.pp3[0]
-            att_dist = 20
-            att_mid_dist = 40
+            #self.spear_rad = 100
+            mark = 1
         elif self.facing == "left":
-            dir_p = self.pp2[0]
-            att_dist = -20   
-            att_mid_dist = -40
+            #self.spear_rad = -100
+            mark = -1
         keys_true = 0    
         directionals = [keys[key.UP], keys[key.DOWN], keys[key.LEFT], keys[key.RIGHT]]
         
         for i in range(len(directionals)):
             if directionals[i]:
                 keys_true += 1  
-            
-        #if keys[key.DOWN] == False and keys[key.LEFT] == False and keys[key.RIGHT] == False:    
+             
         if keys_true == 1:
             if keys[key.UP]:
                 self.first_dir_key = "up"
@@ -116,7 +113,8 @@ class player:                                                   # mangjaklassi l
                         player_1.att = "stab_mid"                        
                     
                 else:
-                        self.att = "stab_back"                    
+                        self.att = "stab_back"
+                                            
             elif keys[key.LEFT]:
                 self.first_dir_key = "left"
                 if self.facing == "left":
@@ -156,52 +154,31 @@ class player:                                                   # mangjaklassi l
                     self.att = "slash_down_up"
                                     
                                  
-        #print self.att                       
-            
-        #print keys
         if self.att == False:
             pass
-        self.att_pos[0] = dir_p + att_dist
+        
+
         if self.att == "stab_up":
-            self.att_angle = 10
-            #self.att_pos[1] = self.pp3[1]
-            #print "up"
-            ##
-        if self.att == "stab_mid":
+            self.att_angle = 20
+        elif self.att == "stab_mid":
             self.att_angle = 0
         elif self.att == "stab_low":
-            self.att_angle = -10
+            self.att_angle = -20
+        elif self.att == "slash_down_up":
+            if self.att_angle <= 20:
+                self.att_angle +=5    
+        elif self.att == "slash_up_down":      
+            if self.att_angle >= -20:
+                self.att_angle -=5  
+        self.att_vel[0] = angle(self.att_angle)[0]
+        self.att_vel[1] = angle(self.att_angle)[1]  
         
-            #print "mid"
-            ##
-        #if self.att == "stab_low":
-            #self.att_pos[1] = self.pp4[1]
-            #print "low"
-            ## 
-        self.att_vel[0] =   angle(self.att_angle)[0] #* .1
-        self.att_vel[1] =   angle(self.att_angle)[1] #* .1 
-        
-        #if self.att_vel[0] < 0:
-        #    self.att_vel[0] *= -1
-             
-        #if self.att_vel[1] < 0:
-        #    self.att_vel[1] *= -1     
-        
-        
-        self.att_pos[0] = self.center[0] + self.spear_rad * self.att_vel[0] #+ 100
-        self.att_pos[1] = self.center[1] + self.spear_rad * self.att_vel[1] #+ 100
-        #print self.att_pos
-        #print self.spear_rad * self.att_vel[0]
-        #print self.att_vel[0]
-        #print math.sin(-10) #* - .1
-        #print math.degrees(10)
-        #print self.center
-        #print self.att_pos
-        print angle(-10)                      
+        self.att_pos[0] = self.center[0] + mark * (self.spear_rad * self.att_vel[0]) #+ 100
+        self.att_pos[1] = self.center[1] +(self.spear_rad * self.att_vel[1]) #+ 100
+
+        print self.att_vel[1]                
         i_pp1.blit(room_1.view(self.att_pos)[0], room_1.view(self.att_pos)[1]) # joonista ryndepunkt
-        #print self.att
-        #print keys
-        #print self.att_pos
+
         
         
     def update(self):   # mangja uuendamine
