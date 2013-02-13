@@ -38,6 +38,11 @@ def update(dt): # vajalik jargneva kahe kasu jaoks
 pyglet.clock.schedule_interval(update, 1.0/90.0) # programmi kiirus
 pyglet.clock.set_fps_limit(90)                   # kaadrisageduse piirang
 
+#def on_key_release(symbol):#,# modifier):
+    #if symbol == key.SPACE:
+    #    print "heh"   
+    #    player_1.att = False
+        
 class player:                                                   # mangjaklassi loomine
     def __init__(self, pp1, image):                             # mis tehakse kui mistahes seda klassi kasutav objekt luuakse, mis parameetreid on voimalik objekti loomisel maarata
         self.pp1=[pp1[0], pp1[1]]                               # esimesele nurga positsjoonile nimekirja andmetuubi andmine
@@ -88,7 +93,10 @@ class player:                                                   # mangjaklassi l
         #first_dir_key = "none"
         #self.att = False
         #first_dir_key
-        #self.att = False
+       
+        #if key.SPACE not in keys:
+        #    self.att = False
+        
         if self.facing == "right":
             #self.spear_rad = 100
             mark = 1
@@ -102,56 +110,80 @@ class player:                                                   # mangjaklassi l
             if directionals[i]:
                 keys_true += 1  
              
-        if keys_true == 1:
-            if keys[key.UP]:
-                self.first_dir_key = "up"
-                player_1.att = "stab_up"
+        #if keys_true == 1:
+        if keys[key.UP]:
+            self.first_dir_key = "up"
+            
+            if self.att == "stab_mid":
+                player_1.att = "slash_mid_up"
+            elif self.att == "stab_down":
+                self.att = "slash_down_up"    
+            else:
+                if self.att != False:
+                    pass
+                else:    
+                    player_1.att = "stab_up"
      
-            elif keys[key.RIGHT]:
-                self.first_dir_key = "right"
-                if self.facing == "right":                   
-                        player_1.att = "stab_mid"                        
+        elif keys[key.RIGHT]:
+            self.first_dir_key = "right"
+            if self.facing == "right":
+                if self.att == "stab_down": 
+                    self.att = "slash_down_mid"
+                elif self.att == "stab_up":
+                    self.att = "slash_up_mid"
+                else:                      
+                    player_1.att = "stab_mid"                        
                     
-                else:
-                        self.att = "stab_back"
+            else:
+                self.att = "stab_back"
                                             
-            elif keys[key.LEFT]:
-                self.first_dir_key = "left"
-                if self.facing == "left":
-                    player_1.att = "stab_mid"
-                else:
-                    self.att = "stab_back"         
+        elif keys[key.LEFT]:
+            self.first_dir_key = "left"
+            if self.facing == "left":
+                player_1.att = "stab_mid"
+            else:
+                self.att = "stab_back"         
                 
-            elif keys[key.DOWN]:
-                self.first_dir_key = "down"
-                player_1.att = "stab_low" 
+        elif keys[key.DOWN]:
+            self.first_dir_key = "down"
+            
+            if self.att == "stab_mid":
+                self.att = "slash_mid_down"
+            elif self.att == "stab_up":
+                self.att = "slash_up_down"
+            
+            else:
+                if self.att != False:
+                    pass
+                else:    
+                    player_1.att = "stab_down" 
  
             
-        if keys_true > 1:
-            if (keys[key.RIGHT] and keys[key.UP]):
-                
-                if self.facing == "right":
-                    if self.first_dir_key == "right":
-                        player_1.att = "slash_mid_up"
+        #if keys_true > 1:
+        #    if (keys[key.RIGHT] and keys[key.UP]):
+        #        
+        #        if self.facing == "right":
+        #            if self.first_dir_key == "right":
+        #                player_1.att = "slash_mid_up"
     
-                    elif self.first_dir_key == "up":
-                        player_1.att = "slash_up_mid"
+        #            elif self.first_dir_key == "up":
+        #                player_1.att = "slash_up_mid"
                         
                 #elif self.facing == "left":        
    
-            if keys[key.LEFT] and keys[key.UP]:
-                if self.facing == "left":
-                    if self.first_dir_key == "left":
-                        player_1.att = "slash_mid_up"
+        #    if keys[key.LEFT] and keys[key.UP]:
+        #        if self.facing == "left":
+        #            if self.first_dir_key == "left":
+        #                player_1.att = "slash_mid_up"
     
-                    elif self.first_dir_key == "up":
-                        player_1.att = "slash_up_mid"
+        #           elif self.first_dir_key == "up":
+        #                player_1.att = "slash_up_mid"
                         
-            if keys[key.UP] and keys[key.DOWN]:
-                if self.first_dir_key == "up":
-                    self.att = "slash_up_down"
-                elif self.first_dir_key == "down":
-                    self.att = "slash_down_up"
+        #    if keys[key.UP] and keys[key.DOWN]:
+        #        if self.first_dir_key == "up":
+        #            self.att = "slash_up_down"
+        #        elif self.first_dir_key == "down":
+        #            self.att = "slash_down_up"
                                     
                                  
         if self.att == False:
@@ -162,25 +194,47 @@ class player:                                                   # mangjaklassi l
             self.att_angle = 20
         elif self.att == "stab_mid":
             self.att_angle = 0
-        elif self.att == "stab_low":
+        elif self.att == "stab_down":
             self.att_angle = -20
         elif self.att == "slash_down_up":
             if self.att_angle <= 20:
                 self.att_angle +=5 
             else:
-                self.att = False       
+                self.att = "stab_up" #False       
         elif self.att == "slash_up_down":      
             if self.att_angle >= -20:
                 self.att_angle -=5
             else:
-                self.att = False      
+                self.att = "stab_down"#False
+        elif self.att == "slash_up_mid":
+            if self.att_angle > 0:
+                self.att_angle -=5
+            else:
+                self.att = "stab_mid"
+        elif self.att == "slash_mid_up":
+            if self.att_angle < 20:
+                self.att_angle +=5
+            else:
+                self.att = "stab_up"         
+        elif self.att == "slash_mid_down":
+            if self.att_angle > -20:
+                self.att_angle -=5
+            else:
+                self.att = "stab_down"            
+        elif self.att == "slash_down_mid":
+            if self.att_angle < 0:
+                self.att_angle +=5
+            else:
+                self.att = "stab_mid"        
+        if keys[key.SPACE] == False:
+            self.att = False              
         self.att_vel[0] = angle(self.att_angle)[0]
         self.att_vel[1] = angle(self.att_angle)[1]  
         
         self.att_pos[0] = self.center[0] + mark * (self.spear_rad * self.att_vel[0]) #+ 100
         self.att_pos[1] = self.center[1] +(self.spear_rad * self.att_vel[1]) #+ 100
 
-        print self.att_vel[1]                
+        print self.att                
         i_pp1.blit(room_1.view(self.att_pos)[0], room_1.view(self.att_pos)[1]) # joonista ryndepunkt
 
         
@@ -410,12 +464,17 @@ def controls():                                                     # nupuvajutu
         current_room = room_1
         
     elif keys[key._2]:
-        current_room = room_2    
+        current_room = room_2
+                
         
             
     elif keys[key.ENTER]:
         pyglet.app.exit()                                            # sulgeb programmi
-        
+
+
+    #for i in range(len(keys)):
+    #    on_key_release(keys[i])
+                
  #   if keys[key.UP]:
  #       player_1.att = "up"
  #       
@@ -424,6 +483,9 @@ def controls():                                                     # nupuvajutu
  #       
  #   if keys[key.UP]:
  #       player_1.att = "up"
+ 
+#@window.event
+
                                                                         
 
 @window.event            
@@ -437,6 +499,10 @@ def on_draw():  # mis toimub iga kaadri jooksul
     room_1.update()
     player_1.update() 
     player_1.draw()
-
+#@window.event
+#def on_key_release(symbol):#,# modifier):
+#    if symbol == key.SPACE:
+#        print "heh"   
+#        player_1.att = False
         
 pyglet.app.run() # Programm kaivitatakse
