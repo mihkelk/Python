@@ -75,7 +75,7 @@ class player:                                                   # mangjaklassi l
         #i_pp2.blit(room_1.view(self.pp2)[0], room_1.view(self.pp2)[1])
         #i_pp3.blit(room_1.view(self.pp3)[0], room_1.view(self.pp3)[1])
         #i_pp4.blit(room_1.view(self.pp4)[0], room_1.view(self.pp4)[1])
-        i_pp4.blit(room_1.view(self.center)[0], room_1.view(self.center)[1])
+        #i_pp4.blit(room_1.view(self.center)[0], room_1.view(self.center)[1])
         
     def jemp(self):                                         # hyppamisfunktsioon
         if self.can_jump == True:                           # kas tohib hyppata?
@@ -187,6 +187,8 @@ class player:                                                   # mangjaklassi l
                                     
                                  
         if self.att == False:
+            self.att_pos = self.center
+            i_pp1.blit(room_1.view(self.att_pos)[0], room_1.view(self.att_pos)[1])
             pass
         
 
