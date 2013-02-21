@@ -20,20 +20,136 @@ i_pp4 = pyglet.image.load('pp4.jpg')
 platform_imag = pyglet.image.load('platform.jpg')
 #------------------------------------------------#
 
+
+#-----------------------------Funktsioonid-----------------------------#
+
 def angle(ang):
     cos = math.cos(math.radians(ang))
-    sin = math.sin(math.radians(ang))
-    #if cos < 0:
-        #cos *= -1
-    #if ang > 0:    
-    #if sin < 0:
-    #    sin *= -1    
-        
+    sin = math.sin(math.radians(ang))    
     return [cos, sin]
     
 
-def update(dt): # vajalik jargneva kahe kasu jaoks
+def update(dt): # vajalik kella/kiiruse jaoks
     return 0
+
+
+def gravity(ob):
+    if "_on_ground" in str(ob.collisions):
+        ob.can_jump = True
+        ob.jump = False
+        ob.vel[1] = 0
+    else:
+        ob.can_jump = False
+        if ob.vel[1] > -20:   
+            ob.vel[1] -= 0.5        
+        
+def collide(ob1, ob2): # kokkupuudete kontrolli funktsioon
+    
+    status = "_False"
+    Vtime = 1   # vertikaalne aeg alla
+    RHtime = 1  # vertikaalne aeg paremale
+    LHtime = 1  # vertikaalne aeg vasakule
+    UVtime = 1  # vertikaalne aeg ylesse
+    
+    if (str(ob2) + "_False") in ob1.collisions:         # kui teise objekti nimetus leitakse koos vastava liidesega esimese objekti kokkupuutumiste nimekirjast 
+        i = ob1.collisions.index(str(ob2) + "_False")   # saab i vaartuseks mitmendal kohal objekt oma liidesega selles nimekirjas oli
+    elif (str(ob2) + "_on_ground") in ob1.collisions:
+        i = ob1.collisions.index(str(ob2) + "_on_ground")
+    elif (str(ob2) + "_right_side") in ob1.collisions:
+        i = ob1.collisions.index(str(ob2) + "_right_side")    
+    elif (str(ob2) + "_left_side") in ob1.collisions:
+        i = ob1.collisions.index(str(ob2) + "_left_side")
+    elif (str(ob2) + "_on_top") in ob1.collisions:
+        i = ob1.collisions.index(str(ob2) + "_on_top")          
+               
+    #----------Kiirused-kontrollideks----------#   
+    Vspeed = ob1.vel[1] + -0.5
+    Vdistance = ob2.pp2[1] - ob1.pp1[1]
+    if Vspeed != 0:                         # nulliga ei saa jagada
+        Vtime = Vdistance / Vspeed
+        
+    UVspeed = ob1.vel[1] + -100
+    UVdistance = ob2.pp1[1] - ob1.pp2[1]
+    if UVspeed != 0:
+        UVtime = UVdistance / UVspeed    
+        
+    RHspeed = ob1.vel[0] + 1
+    RHdistance = ob2.pp1[0] - ob1.pp4[0]
+    if RHspeed != 0:
+        RHtime = RHdistance / RHspeed
+        
+    LHspeed = ob1.vel[0] - 1    
+    LHdistance = ob2.pp4[0] - ob1.pp1[0]    
+    if LHspeed !=0:
+        LHtime = LHdistance / LHspeed    
+        
+                     
+    if (ob1.pp1[0] <= ob2.pp3[0] and ob1.pp1[0] >= ob2.pp1[0])  or (ob1.pp3[0] >=  ob2.pp1[0] and ob1.pp3[0] <= ob2.pp3[0]):
+        if Vtime >= 0 and Vtime < 1:    # ennetav kokkupuutekontroll, tapsem kui punktide kasutamine
+            status = "_on_ground"
+            ob1.pp1[1] = ob2.pp2[1] + 0.05
+        elif UVtime >= 0 and UVtime < 1:
+            status = "_on_top"
+
+    elif ob1.pp2[1] < ob2.pp1[1] or ob1.pp1[1] > ob2.pp2[1]: # Kui objekt asub teisest objektist korgemal
+        pass                                                 # siis lopetatakse funktsioon siinsamas. 
+
+    elif RHtime >=0 and RHtime <1:
+            status = "_right_side"
+    elif LHtime >=0 and LHtime <1:
+            status = "_left_side"    
+        
+
+    ob1.collisions[i] = str(ob2) + status # esimese objekti kokkupuudete nimekirja kohal i asuv vaartus muudetakse stringiks mis koosneb objekti nimest ja kokkupuute tyybist
+
+def collision_group():
+    global current_room                  # uuendatakse ning joonistatakse k6ik platvormid nimekirjas platvormid, kokkupuutekontrolli kasutatakse platvormide uuenduses
+    for i in range(len(current_room.platvormid)):
+        current_room.platvormid[i].update()
+        current_room.platvormid[i].draw()    
+
+def in_screen(ob, room):    # funktsioon mis t6lgendab koordinaate ekraanikoordinaatideks
+        if ob.pp1[0] - room.offset[0] != room.clearance[0]:
+            room.offset[0] = ob.pp1[0] - room.clearance[0]
+        if ob.pp3[0] - room.offset[0] > room.clearance[1]:
+            room.offset[0] = ob.pp3[0] - room.clearance[1]
+            
+        if ob.pp1[1] - room.offset[1] != room.clearance[2]:
+            room.offset[1] = ob.pp1[1] - room.clearance[2]
+            
+def controls():                                                     # nupuvajutused
+    global current_room
+    if keys[key.W]:                 
+        if player_1.jump == True:
+            pass
+        else:
+            if "_on_top" not in str(player_1.collisions):
+                player_1.jemp()
+        
+    elif keys[key.A]:
+        player_1.vel[0] -=1                                 
+        player_1.facing = "left"
+
+    elif keys[key.S]:
+        player_1.pp1[1]-=10
+        
+    elif keys[key.D]:
+        player_1.vel[0] +=1                                          # suurendab horisontaalset kiirust 1 v6rra
+        player_1.facing = "right"
+        
+    elif keys[key._1]:
+        current_room = room_1
+        
+    elif keys[key._2]:
+        current_room = room_2
+                
+        
+            
+    elif keys[key.ENTER]:
+        pyglet.app.exit()                                            # sulgeb programmi
+            
+            
+#----------------------------------------------------------------------#            
 
 pyglet.clock.schedule_interval(update, 1.0/90.0) # programmi kiirus
 pyglet.clock.set_fps_limit(90)                   # kaadrisageduse piirang
@@ -42,6 +158,9 @@ pyglet.clock.set_fps_limit(90)                   # kaadrisageduse piirang
     #if symbol == key.SPACE:
     #    print "heh"   
     #    player_1.att = False
+    
+    
+#--------------------------------klassid-------------------------------# 
         
 class player:                                                   # mangjaklassi loomine
     def __init__(self, pp1, image):                             # mis tehakse kui mistahes seda klassi kasutav objekt luuakse, mis parameetreid on voimalik objekti loomisel maarata
@@ -56,10 +175,10 @@ class player:                                                   # mangjaklassi l
         self.center = [self.pp1[0] + (self.width/2), self.pp1[1] + self.height/2]
                               
         self.collisions = []                                    # kokkupuutumiste nimekirja loomine
-        self.jump = False
-                                               # objekti luues ta parasjagu ei hyppa
-        self.can_jump = False                                   # loomise hetkel ei tohi objekt hyppata
-        self.facing = "right"                   # luues on objekt naoga paremale  
+        self.jump = False                                       # objekti luues ta parasjagu ei hyppa
+                                               
+        self.can_jump = False                                   # loomise hetkel ei tohi objekt olema v6imeline hyppama
+        self.facing = "right"                                   # luues on objekt naoga paremale  
         self.att = False
         
         
@@ -98,15 +217,14 @@ class player:                                                   # mangjaklassi l
         #    self.att = False
         
         if self.facing == "right":
-            #self.spear_rad = 100
             mark = 1
         elif self.facing == "left":
-            #self.spear_rad = -100
             mark = -1
         keys_true = 0    
         directionals = [keys[key.UP], keys[key.DOWN], keys[key.LEFT], keys[key.RIGHT]]
         
-        for i in range(len(directionals)):
+
+        for i in range(len(directionals)):    
             if directionals[i]:
                 keys_true += 1  
              
@@ -265,14 +383,7 @@ class player:                                                   # mangjaklassi l
         in_screen(player_1, room_1)
         self.attack()             
 
-def in_screen(ob, room):    # funktsioon mis t6lgendab koordinaate ekraanikoordinaatideks
-        if ob.pp1[0] - room.offset[0] != room.clearance[0]:
-            room.offset[0] = ob.pp1[0] - room.clearance[0]
-        if ob.pp3[0] - room.offset[0] > room.clearance[1]:
-            room.offset[0] = ob.pp3[0] - room.clearance[1]
-            
-        if ob.pp1[1] - room.offset[1] != room.clearance[2]:
-            room.offset[1] = ob.pp1[1] - room.clearance[2]
+
           
           
             
@@ -354,82 +465,8 @@ class sprite:
         collide(player_1, self)
         
         
-#-----------------------------Funktsioonid-----------------------------#
-def gravity(ob):
-    if "_on_ground" in str(ob.collisions):
-        ob.can_jump = True
-        ob.jump = False
-        ob.vel[1] = 0
-    else:
-        ob.can_jump = False
-        if ob.vel[1] > -20:   
-            ob.vel[1] -= 0.5        
-        
-def collide(ob1, ob2): # kokkupuudete kontrolli funktsioon
-    
-    status = "_False"
-    Vtime = 1   # vertikaalne aeg alla
-    RHtime = 1  # vertikaalne aeg paremale
-    LHtime = 1  # vertikaalne aeg vasakule
-    UVtime = 1  # vertikaalne aeg ylesse
-    
-    if (str(ob2) + "_False") in ob1.collisions:         # kui teise objekti nimetus leitakse koos vastava liidesega esimese objekti kokkupuutumiste nimekirjast 
-        i = ob1.collisions.index(str(ob2) + "_False")   # saab i vaartuseks mitmendal kohal objekt oma liidesega selles nimekirjas oli
-    elif (str(ob2) + "_on_ground") in ob1.collisions:
-        i = ob1.collisions.index(str(ob2) + "_on_ground")
-    elif (str(ob2) + "_right_side") in ob1.collisions:
-        i = ob1.collisions.index(str(ob2) + "_right_side")    
-    elif (str(ob2) + "_left_side") in ob1.collisions:
-        i = ob1.collisions.index(str(ob2) + "_left_side")
-    elif (str(ob2) + "_on_top") in ob1.collisions:
-        i = ob1.collisions.index(str(ob2) + "_on_top")          
-               
-    #----------Kiirused-kontrollideks----------#   
-    Vspeed = ob1.vel[1] + -0.5
-    Vdistance = ob2.pp2[1] - ob1.pp1[1]
-    if Vspeed != 0:                         # nulliga ei saa jagada
-        Vtime = Vdistance / Vspeed
-        
-    UVspeed = ob1.vel[1] + -100
-    UVdistance = ob2.pp1[1] - ob1.pp2[1]
-    if UVspeed != 0:
-        UVtime = UVdistance / UVspeed    
-        
-    RHspeed = ob1.vel[0] + 1
-    RHdistance = ob2.pp1[0] - ob1.pp4[0]
-    if RHspeed != 0:
-        RHtime = RHdistance / RHspeed
-        
-    LHspeed = ob1.vel[0] - 1    
-    LHdistance = ob2.pp4[0] - ob1.pp1[0]    
-    if LHspeed !=0:
-        LHtime = LHdistance / LHspeed    
-        
-                     
-    if (ob1.pp1[0] <= ob2.pp3[0] and ob1.pp1[0] >= ob2.pp1[0])  or (ob1.pp3[0] >=  ob2.pp1[0] and ob1.pp3[0] <= ob2.pp3[0]):
-        if Vtime >= 0 and Vtime < 1:    # ennetav kokkupuutekontroll, tapsem kui punktide kasutamine
-            status = "_on_ground"
-            ob1.pp1[1] = ob2.pp2[1] + 0.05
-        elif UVtime >= 0 and UVtime < 1:
-            status = "_on_top"
 
-    elif ob1.pp2[1] < ob2.pp1[1] or ob1.pp1[1] > ob2.pp2[1]: # Kui objekt asub teisest objektist korgemal
-        pass                                                 # siis lopetatakse funktsioon siinsamas. 
 
-    elif RHtime >=0 and RHtime <1:
-            status = "_right_side"
-    elif LHtime >=0 and LHtime <1:
-            status = "_left_side"    
-        
-
-    ob1.collisions[i] = str(ob2) + status # esimese objekti kokkupuudete nimekirja kohal i asuv vaartus muudetakse stringiks mis koosneb objekti nimest ja kokkupuute tyybist
-
-def collision_group():
-    global current_room                  # uuendatakse ning joonistatakse k6ik platvormid nimekirjas platvormid, kokkupuutekontrolli kasutatakse platvormide uuenduses
-    for i in range(len(current_room.platvormid)):
-        current_room.platvormid[i].update()
-        current_room.platvormid[i].draw()
-#----------------------------------------------------------------------#
 #-----------------------------Loomine----------------------------------#        
 player_1=player([200, 100], pimage) # loob mangja, kasutades player klassi ning maarates ara alutsamiskoordinaadid ning kasutatava pildifaili
 room_1 = room(5,5)
@@ -442,50 +479,7 @@ room.creation(room_2)
 current_room = room_1
  
 #----------------------------------------------------------------------#
-def controls():                                                     # nupuvajutused
-    global current_room
-    if keys[key.W]:                 
-        if player_1.jump == True:
-            pass
-        else:
-            if "_on_top" not in str(player_1.collisions):
-                player_1.jemp()
-        
-    elif keys[key.A]:
-        player_1.vel[0] -=1                                 
-        player_1.facing = "left"
 
-    elif keys[key.S]:
-        player_1.pp1[1]-=10
-        
-    elif keys[key.D]:
-        player_1.vel[0] +=1                                          # suurendab horisontaalset kiirust 1 v6rra
-        player_1.facing = "right"
-        
-    elif keys[key._1]:
-        current_room = room_1
-        
-    elif keys[key._2]:
-        current_room = room_2
-                
-        
-            
-    elif keys[key.ENTER]:
-        pyglet.app.exit()                                            # sulgeb programmi
-
-
-    #for i in range(len(keys)):
-    #    on_key_release(keys[i])
-                
- #   if keys[key.UP]:
- #       player_1.att = "up"
- #       
- #   elif keys[key.RIGHT]:
- #       player_1.att = "up"
- #       
- #   if keys[key.UP]:
- #       player_1.att = "up"
- 
 #@window.event
 
                                                                         
