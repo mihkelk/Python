@@ -18,6 +18,18 @@ i_pp2 = pyglet.image.load('pp2.jpg')
 i_pp3 = pyglet.image.load('pp3.jpg')
 i_pp4 = pyglet.image.load('pp4.jpg')
 platform_imag = pyglet.image.load('platform.jpg')
+
+
+i_sl_ud_1 = pyglet.image.load('images/player/_sl_ud_1.jpg')
+i_sl_ud_2 = pyglet.image.load('images/player/_sl_ud_2.jpg')
+i_sl_ud_3 = pyglet.image.load('images/player/_sl_ud_3.jpg')
+i_sl_ud_4 = pyglet.image.load('images/player/_sl_ud_4.jpg')
+i_sl_ud_5 = pyglet.image.load('images/player/_sl_ud_5.jpg')
+i_sl_ud_6 = pyglet.image.load('images/player/_sl_ud_6.jpg')
+i_sl_ud_7 = pyglet.image.load('images/player/_sl_ud_7.jpg')
+i_sl_ud_8 = pyglet.image.load('images/player/_sl_ud_8.jpg')
+i_sl_ud_9 = pyglet.image.load('images/player/_sl_ud_9.jpg')
+
 #------------------------------------------------#
 
 
@@ -167,6 +179,15 @@ class player:                                                   # mangjaklassi l
         self.pp1=[pp1[0], pp1[1]]                               # esimesele nurga positsjoonile nimekirja andmetuubi andmine
         self.vel=[0,0]                                          # kiirusele nimekirja andmetuubi andmine    
         self.image = image                                      # objekti loomisel antud pildifaili sidumine objektiga
+        
+        
+        
+        
+        
+        
+        
+        
+        
         self.width = 118                                        # laius
         self.height = 125                                       # k6rgus    
         self.pp2 = [self.pp1[0], self.pp1[1] + self.height]     # teise punkti koordinaadid
@@ -195,6 +216,40 @@ class player:                                                   # mangjaklassi l
         #i_pp3.blit(room_1.view(self.pp3)[0], room_1.view(self.pp3)[1])
         #i_pp4.blit(room_1.view(self.pp4)[0], room_1.view(self.pp4)[1])
         #i_pp4.blit(room_1.view(self.center)[0], room_1.view(self.center)[1])
+        
+        
+        if self.att_angle == 20:
+            self.image = i_sl_ud_1
+        elif self.att_angle == 15:
+            self.image = i_sl_ud_2
+        elif self.att_angle == 10:
+            self.image = i_sl_ud_3
+        elif self.att_angle == 5:
+            self.image = i_sl_ud_4
+        elif self.att_angle == 0:
+            self.image = i_sl_ud_5      
+        elif self.att_angle == -5:
+            self.image = i_sl_ud_6
+        elif self.att_angle == -10:
+            self.image = i_sl_ud_7
+        elif self.att_angle == -15:
+            self.image = i_sl_ud_8
+        elif self.att_angle == -20:
+            self.image = i_sl_ud_9
+       
+                
+        
+        
+        #20
+        #15
+        #10
+        #5
+        #0
+        #-5
+        #-10
+        #-15
+        #-20
+
         
     def jemp(self):                                         # hyppamisfunktsioon
         if self.can_jump == True:                           # kas tohib hyppata?
@@ -354,8 +409,25 @@ class player:                                                   # mangjaklassi l
         self.att_pos[0] = self.center[0] + mark * (self.spear_rad * self.att_vel[0]) #+ 100
         self.att_pos[1] = self.center[1] +(self.spear_rad * self.att_vel[1]) #+ 100
 
-        print self.att                
+        #print self.att
+        print self.att_angle                
         i_pp1.blit(room_1.view(self.att_pos)[0], room_1.view(self.att_pos)[1]) # joonista ryndepunkt
+        
+        
+        
+        #if self.att_angle == 20:
+           # i_sl_ud_1
+        
+        
+        #20
+        #15
+        #10
+        #5
+        #0
+        #-5
+        #-10
+        #-15
+        #-20
 
         
         
