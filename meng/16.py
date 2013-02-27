@@ -9,7 +9,8 @@ window = pyglet.window.Window(vsync = False)
 keys = key.KeyStateHandler()
 window.push_handlers(keys)
 fps_display = pyglet.clock.ClockDisplay()
-glEnable(GL_BLEND)
+
+glEnable(GL_BLEND) # labipaistvate png jaoks
 
 pyglet.gl.glClearColor(0, 255, 0, 255)
 
@@ -224,7 +225,7 @@ class player:                                                   # mangjaklassi l
         self.spear_rad = 100
                                              
     def draw(self):
-        #global spea                                                         # objekti joonistamise funktsioon
+                                                               # objekti joonistamise funktsioon
         self.image.blit(room_1.view(self.pp1)[0], room_1.view(self.pp1)[1]) # joonistab pildifaili koordinaatidele
         #i_pp1.blit(room_1.view(self.pp1)[0], room_1.view(self.pp1)[1])     # need olid nurkade asukohakoordinaatide tapsuse kontrollimiseks   
         #i_pp2.blit(room_1.view(self.pp2)[0], room_1.view(self.pp2)[1])
@@ -232,24 +233,17 @@ class player:                                                   # mangjaklassi l
         #i_pp4.blit(room_1.view(self.pp4)[0], room_1.view(self.pp4)[1])
         #i_pp4.blit(room_1.view(self.center)[0], room_1.view(self.center)[1])
         
-        spear = self.image    
         if self.att_angle == 20:
             self.image = i_sl_ud_1
-            oda.rotation = -20
-            spear = i_spear_1
         elif self.att_angle == 15:
             self.image = i_sl_ud_2
-            spear = i_spear_2
         elif self.att_angle == 10:
             self.image = i_sl_ud_3
-            spear = i_spear_3
         elif self.att_angle == 5:
             self.image = i_sl_ud_4
-            spear = i_spear_4
         elif self.att_angle == 0:
             self.image = i_sl_ud_5
-            oda.rotation = 0 
-            spear = i_spear_5     
+            spear.rotation = 0     
         elif self.att_angle == -5:
             self.image = i_sl_ud_6
         elif self.att_angle == -10:
@@ -259,11 +253,13 @@ class player:                                                   # mangjaklassi l
         elif self.att_angle == -20:
             self.image = i_sl_ud_9
             
-        else:
-            spear = self.image    
        
-        spear.blit(room_1.view(self.pp1)[0], room_1.view(self.pp1)[1])        
+        spear.x = room_1.view(self.pp1)[0] + self.width/2
+        spear.y = room_1.view(self.pp1)[1] + self.height/2 #+ 12.5
         
+        
+        spear.rotation = -1 * self.att_angle
+
         
         #20
         #15
@@ -434,8 +430,7 @@ class player:                                                   # mangjaklassi l
         self.att_pos[0] = self.center[0] + mark * (self.spear_rad * self.att_vel[0]) #+ 100
         self.att_pos[1] = self.center[1] +(self.spear_rad * self.att_vel[1]) #+ 100
 
-        #print self.att
-        print self.att_angle                
+              
         i_pp1.blit(room_1.view(self.att_pos)[0], room_1.view(self.att_pos)[1]) # joonista ryndepunkt
         
         
@@ -567,8 +562,9 @@ class sprite:
 #-----------------------------Loomine----------------------------------#        
 player_1=player([200, 100], pimage) # loob mangja, kasutades player klassi ning maarates ara alutsamiskoordinaadid ning kasutatava pildifaili
 
-oda = pyglet.sprite.Sprite(i_spear, x=player_1.pp1[0], y=player_1.pp1[1])
-
+spear = pyglet.sprite.Sprite(i_spear, x=player_1.pp1[0], y=player_1.pp1[1])
+spear.image.anchor_x += player_1.image.width/2 #- player_1.height/2
+spear.image.anchor_y += player_1.image.height/2 #- player_1.width/2
 room_1 = room(5,5)
 room_2 = room(5,5)
 
@@ -580,7 +576,7 @@ room.creation(room_2)
 
 current_room = room_1
  
-oda.draw()
+spear.draw()
 #----------------------------------------------------------------------#
 
 #@window.event
@@ -598,7 +594,7 @@ def on_draw():  # mis toimub iga kaadri jooksul
     room_1.update()
     player_1.update() 
     player_1.draw()
-    oda.draw()
+    spear.draw()
 #@window.event
 #def on_key_release(symbol):#,# modifier):
 #    if symbol == key.SPACE:
