@@ -23,6 +23,11 @@ i_pp4 = pyglet.image.load('pp4.jpg')
 platform_imag = pyglet.image.load('platform.jpg')
 
 
+i_spear = pyglet.image.load('images/weapons/spear/5.png')
+
+
+
+
 i_spear_1 = pyglet.image.load('images/player/right/1.png')
 i_spear_2 = pyglet.image.load('images/player/right/2.png')
 i_spear_3 = pyglet.image.load('images/player/right/3.png')
@@ -230,6 +235,7 @@ class player:                                                   # mangjaklassi l
         spear = self.image    
         if self.att_angle == 20:
             self.image = i_sl_ud_1
+            oda.rotation = -20
             spear = i_spear_1
         elif self.att_angle == 15:
             self.image = i_sl_ud_2
@@ -241,7 +247,8 @@ class player:                                                   # mangjaklassi l
             self.image = i_sl_ud_4
             spear = i_spear_4
         elif self.att_angle == 0:
-            self.image = i_sl_ud_5 
+            self.image = i_sl_ud_5
+            oda.rotation = 0 
             spear = i_spear_5     
         elif self.att_angle == -5:
             self.image = i_sl_ud_6
@@ -559,8 +566,13 @@ class sprite:
 
 #-----------------------------Loomine----------------------------------#        
 player_1=player([200, 100], pimage) # loob mangja, kasutades player klassi ning maarates ara alutsamiskoordinaadid ning kasutatava pildifaili
+
+oda = pyglet.sprite.Sprite(i_spear, x=player_1.pp1[0], y=player_1.pp1[1])
+
 room_1 = room(5,5)
 room_2 = room(5,5)
+
+
 
 room.creation(room_1)
 room.creation(room_2)
@@ -568,6 +580,7 @@ room.creation(room_2)
 
 current_room = room_1
  
+oda.draw()
 #----------------------------------------------------------------------#
 
 #@window.event
@@ -585,6 +598,7 @@ def on_draw():  # mis toimub iga kaadri jooksul
     room_1.update()
     player_1.update() 
     player_1.draw()
+    oda.draw()
 #@window.event
 #def on_key_release(symbol):#,# modifier):
 #    if symbol == key.SPACE:
