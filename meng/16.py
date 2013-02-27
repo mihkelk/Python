@@ -24,26 +24,47 @@ i_pp4 = pyglet.image.load('pp4.jpg')
 platform_imag = pyglet.image.load('platform.jpg')
 
 
-i_spear = pyglet.image.load('images/weapons/spear/5.png')
+i_spear_r = pyglet.image.load('images/right/weapons/spear/5.png')
+
+#setattr(self,"i_arms")
+
+class image_storage:
+    def  __init__(self):
+        heh = "heh"
+
+images = image_storage()
+for i in range(20, -20, -5):
+    strng = str(i)
+    #strng.replace('-', 'm')
+    if '-' in str(i):
+        strng = 'm' + str(-1*i)
+    dir = 'images/right/player/arms/' + strng + '.jpg'
+    setattr(images, 'i_player_arms_' + strng, pyglet.image.load(dir))
+    print "ok"
+#i_arms_20
+#i_arms_15
+#i_arms_10
+#i_arms_5
+#i_arms_0
+#i_arms_5
 
 
 
+#i_spear_r_1 = pyglet.image.load('images/player/right/1.png')
+#i_spear_r_2 = pyglet.image.load('images/player/right/2.png')
+#ispear_3 = pyglet.image.load('images/player/right/3.png')
+#i_spear_r_4 = pyglet.image.load('images/player/right/4.png')
+#i_spear_r_5 = pyglet.image.load('images/player/right/5.png')
 
-i_spear_1 = pyglet.image.load('images/player/right/1.png')
-i_spear_2 = pyglet.image.load('images/player/right/2.png')
-i_spear_3 = pyglet.image.load('images/player/right/3.png')
-i_spear_4 = pyglet.image.load('images/player/right/4.png')
-i_spear_5 = pyglet.image.load('images/player/right/5.png')
-
-i_sl_ud_1 = pyglet.image.load('images/player/_sl_ud_1.jpg')
-i_sl_ud_2 = pyglet.image.load('images/player/_sl_ud_2.jpg')
-i_sl_ud_3 = pyglet.image.load('images/player/_sl_ud_3.jpg')
-i_sl_ud_4 = pyglet.image.load('images/player/_sl_ud_4.jpg')
-i_sl_ud_5 = pyglet.image.load('images/player/_sl_ud_5.jpg')
-i_sl_ud_6 = pyglet.image.load('images/player/_sl_ud_6.jpg')
-i_sl_ud_7 = pyglet.image.load('images/player/_sl_ud_7.jpg')
-i_sl_ud_8 = pyglet.image.load('images/player/_sl_ud_8.jpg')
-i_sl_ud_9 = pyglet.image.load('images/player/_sl_ud_9.jpg')
+#i_sl_ud_1 = pyglet.image.load('images/player/_sl_ud_1.jpg')
+#i_sl_ud_2 = pyglet.image.load('images/player/_sl_ud_2.jpg')
+#i_sl_ud_3 = pyglet.image.load('images/player/_sl_ud_3.jpg')
+#i_sl_ud_4 = pyglet.image.load('images/player/_sl_ud_4.jpg')
+#i_sl_ud_5 = pyglet.image.load('images/player/_sl_ud_5.jpg')
+#i_sl_ud_6 = pyglet.image.load('images/player/_sl_ud_6.jpg')
+#i_sl_ud_7 = pyglet.image.load('images/player/_sl_ud_7.jpg')
+#i_sl_ud_8 = pyglet.image.load('images/player/_sl_ud_8.jpg')
+#i_sl_ud_9 = pyglet.image.load('images/player/_sl_ud_9.jpg')
 
 #------------------------------------------------#
 
@@ -233,25 +254,31 @@ class player:                                                   # mangjaklassi l
         #i_pp4.blit(room_1.view(self.pp4)[0], room_1.view(self.pp4)[1])
         #i_pp4.blit(room_1.view(self.center)[0], room_1.view(self.center)[1])
         
-        if self.att_angle == 20:
-            self.image = i_sl_ud_1
-        elif self.att_angle == 15:
-            self.image = i_sl_ud_2
-        elif self.att_angle == 10:
-            self.image = i_sl_ud_3
-        elif self.att_angle == 5:
-            self.image = i_sl_ud_4
-        elif self.att_angle == 0:
-            self.image = i_sl_ud_5
-            spear.rotation = 0     
-        elif self.att_angle == -5:
-            self.image = i_sl_ud_6
-        elif self.att_angle == -10:
-            self.image = i_sl_ud_7
-        elif self.att_angle == -15:
-            self.image = i_sl_ud_8
-        elif self.att_angle == -20:
-            self.image = i_sl_ud_9
+        anglestring = str(self.att_angle)
+        if '-' in anglestring:
+            anglestring = 'm' + str(-1*self.att_angle)
+        #anglestring.replace('-', 'm')
+        self.image = getattr(images, "i_player_arms_" + str(anglestring))
+        
+        #if self.att_angle == 20:
+        #    self.image = i_sl_ud_1
+        #elif self.att_angle == 15:
+        #    self.image = i_sl_ud_2
+        #elif self.att_angle == 10:
+        #    self.image = i_sl_ud_3
+        #elif self.att_angle == 5:
+        #    self.image = i_sl_ud_4
+        #elif self.att_angle == 0:
+        #    self.image = i_sl_ud_5
+        #    spear.rotation = 0     
+        #elif self.att_angle == -5:
+        #    self.image = i_sl_ud_6
+        #elif self.att_angle == -10:
+        #    self.image = i_sl_ud_7
+        #elif self.att_angle == -15:
+        #    self.image = i_sl_ud_8
+        #elif self.att_angle == -20:
+        #    self.image = i_sl_ud_9
             
        
         spear.x = room_1.view(self.pp1)[0] + self.width/2
@@ -562,7 +589,7 @@ class sprite:
 #-----------------------------Loomine----------------------------------#        
 player_1=player([200, 100], pimage) # loob mangja, kasutades player klassi ning maarates ara alutsamiskoordinaadid ning kasutatava pildifaili
 
-spear = pyglet.sprite.Sprite(i_spear, x=player_1.pp1[0], y=player_1.pp1[1])
+spear = pyglet.sprite.Sprite(i_spear_r, x=player_1.pp1[0], y=player_1.pp1[1])
 spear.image.anchor_x += player_1.image.width/2 #- player_1.height/2
 spear.image.anchor_y += player_1.image.height/2 #- player_1.width/2
 room_1 = room(5,5)
