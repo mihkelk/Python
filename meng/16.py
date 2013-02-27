@@ -2,13 +2,16 @@
 import pyglet
 import math
 from pyglet.window import key
+from pyglet.gl import *
 
     
 window = pyglet.window.Window(vsync = False)
 keys = key.KeyStateHandler()
 window.push_handlers(keys)
 fps_display = pyglet.clock.ClockDisplay()
+glEnable(GL_BLEND)
 
+pyglet.gl.glClearColor(0, 255, 0, 255)
 
 
 #-------------pildifailide-laadimine-------------#
@@ -19,6 +22,12 @@ i_pp3 = pyglet.image.load('pp3.jpg')
 i_pp4 = pyglet.image.load('pp4.jpg')
 platform_imag = pyglet.image.load('platform.jpg')
 
+
+i_spear_1 = pyglet.image.load('images/player/right/1.png')
+i_spear_2 = pyglet.image.load('images/player/right/2.png')
+i_spear_3 = pyglet.image.load('images/player/right/3.png')
+i_spear_4 = pyglet.image.load('images/player/right/4.png')
+i_spear_5 = pyglet.image.load('images/player/right/5.png')
 
 i_sl_ud_1 = pyglet.image.load('images/player/_sl_ud_1.jpg')
 i_sl_ud_2 = pyglet.image.load('images/player/_sl_ud_2.jpg')
@@ -209,7 +218,8 @@ class player:                                                   # mangjaklassi l
         self.first_dir_key = "none"
         self.spear_rad = 100
                                              
-    def draw(self):                                                         # objekti joonistamise funktsioon
+    def draw(self):
+        #global spea                                                         # objekti joonistamise funktsioon
         self.image.blit(room_1.view(self.pp1)[0], room_1.view(self.pp1)[1]) # joonistab pildifaili koordinaatidele
         #i_pp1.blit(room_1.view(self.pp1)[0], room_1.view(self.pp1)[1])     # need olid nurkade asukohakoordinaatide tapsuse kontrollimiseks   
         #i_pp2.blit(room_1.view(self.pp2)[0], room_1.view(self.pp2)[1])
@@ -217,17 +227,22 @@ class player:                                                   # mangjaklassi l
         #i_pp4.blit(room_1.view(self.pp4)[0], room_1.view(self.pp4)[1])
         #i_pp4.blit(room_1.view(self.center)[0], room_1.view(self.center)[1])
         
-        
+        spear = self.image    
         if self.att_angle == 20:
             self.image = i_sl_ud_1
+            spear = i_spear_1
         elif self.att_angle == 15:
             self.image = i_sl_ud_2
+            spear = i_spear_2
         elif self.att_angle == 10:
             self.image = i_sl_ud_3
+            spear = i_spear_3
         elif self.att_angle == 5:
             self.image = i_sl_ud_4
+            spear = i_spear_4
         elif self.att_angle == 0:
-            self.image = i_sl_ud_5      
+            self.image = i_sl_ud_5 
+            spear = i_spear_5     
         elif self.att_angle == -5:
             self.image = i_sl_ud_6
         elif self.att_angle == -10:
@@ -236,8 +251,11 @@ class player:                                                   # mangjaklassi l
             self.image = i_sl_ud_8
         elif self.att_angle == -20:
             self.image = i_sl_ud_9
+            
+        else:
+            spear = self.image    
        
-                
+        spear.blit(room_1.view(self.pp1)[0], room_1.view(self.pp1)[1])        
         
         
         #20
