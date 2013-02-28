@@ -33,14 +33,14 @@ class image_storage:
         heh = "heh"
 
 images = image_storage()
-for i in range(20, -20, -5):
-    strng = str(i)
+for i in range(20, -25, -5):
+    #strng = str(i)
     #strng.replace('-', 'm')
-    if '-' in str(i):
-        strng = 'm' + str(-1*i)
+    strng = str(i).replace('-', 'm')
+        #strng = 'm' + str(-1*i)
     dir = 'images/right/player/arms/' + strng + '.jpg'
     setattr(images, 'i_player_arms_' + strng, pyglet.image.load(dir))
-    print "ok"
+    if i < 20: pass
 #i_arms_20
 #i_arms_15
 #i_arms_10
@@ -254,11 +254,12 @@ class player:                                                   # mangjaklassi l
         #i_pp4.blit(room_1.view(self.pp4)[0], room_1.view(self.pp4)[1])
         #i_pp4.blit(room_1.view(self.center)[0], room_1.view(self.center)[1])
         
-        anglestring = str(self.att_angle)
-        if '-' in anglestring:
-            anglestring = 'm' + str(-1*self.att_angle)
+        anglestring = str(self.att_angle).replace('-', 'm')
+        #if '-' in anglestring:
+        #    anglestring = 'm' + str(-1*self.att_angle)
         #anglestring.replace('-', 'm')
-        self.image = getattr(images, "i_player_arms_" + str(anglestring))
+        if anglestring != 'm25' and anglestring != '25':
+            self.image = getattr(images, "i_player_arms_" + str(anglestring))
         
         #if self.att_angle == 20:
         #    self.image = i_sl_ud_1
