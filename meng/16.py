@@ -23,8 +23,14 @@ i_pp3 = pyglet.image.load('pp3.jpg')
 i_pp4 = pyglet.image.load('pp4.jpg')
 platform_imag = pyglet.image.load('platform.jpg')
 
+#resources = pyglet.resource.ZIPLocation('kt.zip', '/')
+resources = pyglet.resource.ZIPLocation('kt.zip', 'images\right\weapons\spear')
+#resource_loc = pyglet.resource.ZIPLocation('kt.zip', 'images/right/weapons/spear/5.png')
+#i_spear_r = pyglet.resource.image('images/right/weapons/spear/5.png')
+#i_spear_r = pyglet.image.load(str(resources) + 'images/right/weapons/spear/5.png')
+heh = resources.open('5.png', 'rb')
+i_spear_r = pyglet.image.load('5.png', heh)
 
-i_spear_r = pyglet.image.load('images/right/weapons/spear/5.png')
 
 #setattr(self,"i_arms")
 
