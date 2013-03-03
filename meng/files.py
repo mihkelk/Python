@@ -1,26 +1,10 @@
 import pyglet
+import zipfile
 
-
-class images:
-    def __init__(self):
-        lel = self
-        #i_player_arms_20 = "lel" 
-        
-
-lol = pyglet.image
-
-i_player_arms_20 = "lel"           
-    
-for i in range(20, -20, -5):
-    #dir = 'images/right/player/arms/' + str(i) + '.jpg'
-    #setattr(lol, 'i_player_arms_' + str(i), pyglet.image.load(dir))
-    print "ok"
-#print lol.i_player_arms_m1
-    
-lell = "-hueuheuhue+hehueuhe-"
-print lell
-lell.replace("h", 'm')
-print lell
-resources = pyglet.resource.ZIPLocation('kt.zip', 'images\right\weapons\spear\5.png')
-
-print resources
+jeep = zipfile.ZipFile('kt.zip')
+#zeep =  pyglet.resource.file(jeep, 'rt')
+resources = pyglet.resource.ZIPLocation(jeep, 'images/right/weapons/spear')
+#print resources.zip
+#heh = resources.open('5.png')
+heh = resources.open('5.png')
+#i_spear_r = pyglet.image.load(heh)#'5.png', heh)

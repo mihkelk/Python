@@ -1,5 +1,6 @@
 
 import pyglet
+import zipfile
 import math
 from pyglet.window import key
 from pyglet.gl import *
@@ -16,37 +17,49 @@ pyglet.gl.glClearColor(0, 255, 0, 255)
 
 
 #-------------pildifailide-laadimine-------------#
-pimage =  pyglet.image.load('lel.jpg')
+pimage =  pyglet.resource.image('lel.jpg')
 i_pp1 = pyglet.image.load('pp1.jpg')
 i_pp2 = pyglet.image.load('pp2.jpg')
 i_pp3 = pyglet.image.load('pp3.jpg')
 i_pp4 = pyglet.image.load('pp4.jpg')
-platform_imag = pyglet.image.load('platform.jpg')
-
-#resources = pyglet.resource.ZIPLocation('kt.zip', '/')
-resources = pyglet.resource.ZIPLocation('kt.zip', 'images\right\weapons\spear')
-#resource_loc = pyglet.resource.ZIPLocation('kt.zip', 'images/right/weapons/spear/5.png')
-#i_spear_r = pyglet.resource.image('images/right/weapons/spear/5.png')
-#i_spear_r = pyglet.image.load(str(resources) + 'images/right/weapons/spear/5.png')
-heh = resources.open('5.png', 'rb')
-i_spear_r = pyglet.image.load('5.png', heh)
+platform_imag = pyglet.resource.image('platform.jpg')
 
 
-#setattr(self,"i_arms")
+resources =  zipfile.ZipFile('16.zip')
+#resources_loc = pyglet.resource.ZIPLocation(resources, '/')
+
+#heh = resources.open('images/right/weapons/spear/5.png')
+#i_spear_r = pyglet.image.load('5.png', heh)
+
 
 class image_storage:
     def  __init__(self):
         heh = "heh"
-
-images = image_storage()
-for i in range(20, -25, -5):
-    #strng = str(i)
-    #strng.replace('-', 'm')
-    strng = str(i).replace('-', 'm')
-        #strng = 'm' + str(-1*i)
-    dir = 'images/right/player/arms/' + strng + '.jpg'
-    setattr(images, 'i_player_arms_' + strng, pyglet.image.load(dir))
-    if i < 20: pass
+        self.player()
+        self.weapons()
+        #self.image_locl = pyglet.resource.ZIPLocation(resources, 'images/')
+        
+        
+        
+    def player(self):
+        for i in range(20, -25, -5):
+            #strng = str(i)
+            #strng.replace('-', 'm')
+            strng = str(i).replace('-', 'm')
+                #strng = 'm' + str(-1*i)
+            dir = 'images/right/player/arms/' + strng + '.jpg'
+            file = resources.open(dir)
+            #setattr(images, 'i_player_arms_' + strng, pyglet.image.load(dir))
+            setattr(self, 'i_player_arms_' + strng, pyglet.image.load(dir, file))
+            if i < 20: pass
+            
+    def weapons(self):
+        file = resources.open('images/right/weapons/spear/5.png')
+        self.i_spear_r = pyglet.image.load('5.png', file)
+    
+    
+    
+images = image_storage()   
 #i_arms_20
 #i_arms_15
 #i_arms_10
@@ -596,7 +609,7 @@ class sprite:
 #-----------------------------Loomine----------------------------------#        
 player_1=player([200, 100], pimage) # loob mangja, kasutades player klassi ning maarates ara alutsamiskoordinaadid ning kasutatava pildifaili
 
-spear = pyglet.sprite.Sprite(i_spear_r, x=player_1.pp1[0], y=player_1.pp1[1])
+spear = pyglet.sprite.Sprite(images.i_spear_r, x=player_1.pp1[0], y=player_1.pp1[1])
 spear.image.anchor_x += player_1.image.width/2 #- player_1.height/2
 spear.image.anchor_y += player_1.image.height/2 #- player_1.width/2
 room_1 = room(5,5)
