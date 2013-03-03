@@ -18,6 +18,7 @@ i_pp2 = pyglet.image.load('pp2.jpg')
 i_pp3 = pyglet.image.load('pp3.jpg')
 i_pp4 = pyglet.image.load('pp4.jpg')
 platform_imag = pyglet.image.load('platform.jpg')
+#platform_imag = pyglet.resource.image('platform.jpg')
 #------------------------------------------------#
 
 def angle(ang):
@@ -176,7 +177,7 @@ class player:                                                   # mangjaklassi l
         self.att_pos[0] = self.center[0] + mark * (self.spear_rad * self.att_vel[0]) #+ 100
         self.att_pos[1] = self.center[1] +(self.spear_rad * self.att_vel[1]) #+ 100
 
-        print self.att_vel[1]                
+        #print self.att_vel[1]                
         i_pp1.blit(room_1.view(self.att_pos)[0], room_1.view(self.att_pos)[1]) # joonista ryndepunkt
 
         
