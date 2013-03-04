@@ -16,33 +16,30 @@ glEnable(GL_BLEND) # labipaistvate png jaoks
 pyglet.gl.glClearColor(0, 255, 0, 255)
 
 
-#-------------pildifailide-laadimine-------------#
+#-------------failide-laadimine-------------#
 pimage =  pyglet.resource.image('lel.jpg')
 i_pp1 = pyglet.image.load('pp1.jpg')
 i_pp2 = pyglet.image.load('pp2.jpg')
 i_pp3 = pyglet.image.load('pp3.jpg')
 i_pp4 = pyglet.image.load('pp4.jpg')
-platform_imag = pyglet.resource.image('platform.jpg')
-
 
 resources =  zipfile.ZipFile('16.zip')
-#resources_loc = pyglet.resource.ZIPLocation(resources, '/')
-
-#heh = resources.open('images/right/weapons/spear/5.png')
-#i_spear_r = pyglet.image.load('5.png', heh)
-
 
 class image_storage:
     def  __init__(self):
-        heh = "heh"
+
+        #self.image_locl = pyglet.resource.ZIPLocation(resources, 'images/')
+        #self.image_locl = pyglet.resource.ZIPLocation(resources, 'images/right/weapons/spear')
         self.player()
         self.weapons()
-        #self.image_locl = pyglet.resource.ZIPLocation(resources, 'images/')
+        self.environment()
+        
         
         
         
     def player(self):
-        for i in range(20, -25, -5):
+        
+        for i in range(20, -25, -5): #laeb sisse k2te pildifailid iga rynnaku nurga jaoks
             #strng = str(i)
             #strng.replace('-', 'm')
             strng = str(i).replace('-', 'm')
@@ -50,13 +47,25 @@ class image_storage:
             dir = 'images/right/player/arms/' + strng + '.jpg'
             file = resources.open(dir)
             #setattr(images, 'i_player_arms_' + strng, pyglet.image.load(dir))
+            
             setattr(self, 'i_player_arms_' + strng, pyglet.image.load(dir, file))
-            if i < 20: pass
+            
+            
+            #setattr(self, 'i_player_arms_' + strng, pyglet.resource.image(dir, file))
+            
+            
+            #if i < 20: pass
             
     def weapons(self):
+        #global resources
         file = resources.open('images/right/weapons/spear/5.png')
         self.i_spear_r = pyglet.image.load('5.png', file)
-    
+        
+        
+    def environment(self):
+        file = resources.open('images/environment/platform.jpg')
+        self.i_platform = pyglet.image.load('platform.jpg', file)    
+        
     
     
 images = image_storage()   
@@ -555,18 +564,18 @@ class room:
             self.platvorme = 3                                         
             for i in range(self.platvorme):  # luuakse teatud hulk platvorme, trepina
                 self.platvormid.append(i)
-                self.platvormid[i] = sprite([(i+1) * 200,(i+1) * 50], platform_imag)
+                self.platvormid[i] = sprite([(i+1) * 200,(i+1) * 50], images.i_platform)
                 
-            vasak_testiplatvorm = sprite([1,100], platform_imag)
-            ylemine_testiplatvorm = sprite([200,300], platform_imag)
+            vasak_testiplatvorm = sprite([1,100], images.i_platform)
+            ylemine_testiplatvorm = sprite([200,300], images.i_platform)
             self.platvormid.append(vasak_testiplatvorm)
             self.platvormid.append(ylemine_testiplatvorm)
             
         if self == room_2:
-            platvorm_1 = sprite([0,0], platform_imag)
+            platvorm_1 = sprite([0,0], images.i_platform)
             self.platvormid.append(platvorm_1)
             for i in range(4):
-                maa = sprite([i * platvorm_1.width, 0 ], platform_imag)
+                maa = sprite([i * platvorm_1.width, 0 ], images.i_platform)
                 self.platvormid.append(maa)
                 
                 
@@ -575,7 +584,8 @@ class room:
 class sprite:
     def __init__(self, pp1, image):
         self.pp1=[pp1[0],pp1[1]]
-        self.image = platform_imag
+        #self.image = images.i_platform
+        self.image = pyglet.sprite.Sprite(images.i_platform)
         self.width = 188
         self.height = 35
         self.pp2 = [self.pp1[0] +self. width, self.pp1[1]]
@@ -590,11 +600,16 @@ class sprite:
         player_1.collisions.append(str(self) + "_False")    # loomisel lisatakse k6ik selle klassi objektid mangja kokkupuudete nimekirja
         
     def draw(self):
-        self.image.blit(room_1.view(self.pp1)[0], room_1.view(self.pp1)[1])
+        self.image.x = room_1.view(self.pp1)[0]
+        self.image.y = room_1.view(self.pp1)[1]
+        self.image.draw()
+        #self.image.blit(room_1.view(self.pp1)[0], room_1.view(self.pp1)[1])
+        #self.image.draw(room_1.view(self.pp1)[0], room_1.view(self.pp1)[1])
         
         
     
     def update(self):
+        #self.image.x = self.
         #self.image.blit(-player_1.pos[0]+self.pos[0], player_1.pos[1]+self.pos[1]) 
         #self.image.blit(self.pos[0], self.pos[1])
         #self.pp2 = [self.pp1[0], self.pp1[1] + self.height]
