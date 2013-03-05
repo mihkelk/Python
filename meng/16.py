@@ -44,15 +44,23 @@ class image_storage:
             #strng.replace('-', 'm')
             strng = str(i).replace('-', 'm')
                 #strng = 'm' + str(-1*i)
-            dir = 'images/right/player/arms/' + strng + '.jpg'
-            file = resources.open(dir)
+            file_directory = 'images/right/player/arms/' + strng + '.jpg'
+            open_file = resources.open(file_directory)
             #setattr(images, 'i_player_arms_' + strng, pyglet.image.load(dir))
             
-            setattr(self, 'i_player_arms_' + strng, pyglet.image.load(dir, file))
+            setattr(self, 'i_player_arms_' + strng, pyglet.image.load(file_directory, open_file))
             
             
             #setattr(self, 'i_player_arms_' + strng, pyglet.resource.image(dir, file))
             
+        for i in range(3):
+            
+            file_directory = 'images/right/player/legs/pl_l_' + str(i) + '.png'
+            open_file = resources.open(file_directory) 
+            
+            setattr(self, 'i_player_legs_' + str(i), pyglet.image.load(file_directory, open_file))
+        
+           # self.i_player_legs   
             
             #if i < 20: pass
             
@@ -245,7 +253,7 @@ class player:                                                   # mangjaklassi l
         self.image = image                                      # objekti loomisel antud pildifaili sidumine objektiga
         
         
-        
+        self.i_legs = images.i_player_legs_2
         
         
         
@@ -272,8 +280,15 @@ class player:                                                   # mangjaklassi l
         self.att_vel = [0, 0]
         self.first_dir_key = "none"
         self.spear_rad = 100
+        
+        
+        self.step = 1
                                              
     def draw(self):
+        
+
+        
+        
                                                                # objekti joonistamise funktsioon
         self.image.blit(room_1.view(self.pp1)[0], room_1.view(self.pp1)[1]) # joonistab pildifaili koordinaatidele
         #i_pp1.blit(room_1.view(self.pp1)[0], room_1.view(self.pp1)[1])     # need olid nurkade asukohakoordinaatide tapsuse kontrollimiseks   
@@ -316,6 +331,15 @@ class player:                                                   # mangjaklassi l
         
         spear.rotation = -1 * self.att_angle
 
+        if keys[key.D] == True:
+            if self.step == 1:
+                self.i_legs = images.i_player_legs_0
+                self.i_legs.blit(room_1.view(self.pp1)[0], room_1.view(self.pp1)[1])
+            elif self.step == 2:
+                self.i_legs = images.i_player_legs_1
+            elif self.step == 3:
+                self.i_legs = images.i_player_legs_2
+            print self.step
         
         #20
         #15
@@ -508,6 +532,12 @@ class player:                                                   # mangjaklassi l
         
         
     def update(self):   # mangja uuendamine
+        
+        if self.step >= 3:
+            self.step = 1
+        else:
+            self.step +=1
+        
         
         if "_on_top" in str(self.collisions) and "_on_ground" not in str(self.collisions): # kui objekti ylemine serv puudutab midagi ja alumine parasjagu ei puuduta
                 self.vel[1] = -1
