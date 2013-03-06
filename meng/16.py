@@ -38,7 +38,7 @@ class image_storage:
         
         
     def player(self):
-        
+        self.a_pl_legs = []
         for i in range(20, -25, -5): #laeb sisse k2te pildifailid iga rynnaku nurga jaoks
             #strng = str(i)
             #strng.replace('-', 'm')
