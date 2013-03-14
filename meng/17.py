@@ -38,10 +38,17 @@ class image_storage:
         
         
     def player(self):
-        a_player_legs = []
+        a_player_legs_right = []
+        a_player_legs_left = []
         open_file = resources.open('images/right/player/pl_torso.png')
-        self.i_pl_torso = pyglet.image.load('pl_torso.png', open_file)
-        self.i_pl_torso = pyglet.sprite.Sprite(self.i_pl_torso)
+        self.i_pl_torso_right = pyglet.image.load('pl_torso.png', open_file)
+        self.i_pl_torso_right = pyglet.sprite.Sprite(self.i_pl_torso_right)
+
+        open_file = resources.open('images/left/player/pl_torso.png')
+        self.i_pl_torso_left = pyglet.image.load('pl_torso.png', open_file)
+        self.i_pl_torso_left = pyglet.sprite.Sprite(self.i_pl_torso_left)        
+        
+        
         for i in range(20, -25, -5): #laeb sisse k2te pildifailid iga rynnaku nurga jaoks
             #strng = str(i)
             #strng.replace('-', 'm')
@@ -61,12 +68,24 @@ class image_storage:
             file_directory = 'images/right/player/legs/pl_l_' + str(i) + '.png'
             open_file = resources.open(file_directory) 
             
-            setattr(self, 'i_player_legs_' + str(i), pyglet.image.load(file_directory, open_file))
+            setattr(self, 'i_player_legs_right' + str(i), pyglet.image.load(file_directory, open_file))
             #setattr(self, ('a_player_legs[' + str(i) + ']'), pyglet.image.load(file_directory, open_file))
-            a_player_legs.append(getattr(self, 'i_player_legs_' + str(i)))
+            a_player_legs_right.append(getattr(self, 'i_player_legs_right' + str(i)))
            
-        self.a_player_legs = pyglet.image.Animation.from_image_sequence(a_player_legs, 0.2, loop=True)    
-        self.a_player_legs = pyglet.sprite.Sprite(self.a_player_legs)    
+        self.a_player_legs_right = pyglet.image.Animation.from_image_sequence(a_player_legs_right, 0.2, loop=True)    
+        self.a_player_legs_right = pyglet.sprite.Sprite(self.a_player_legs_right)
+        
+        for i in range(4): # lisab attribuudi self.i_player_legs_i
+            
+            file_directory = 'images/left/player/legs/pl_l_' + str(i) + '.png'
+            open_file = resources.open(file_directory) 
+            
+            setattr(self, 'i_player_legs_left' + str(i), pyglet.image.load(file_directory, open_file))
+            #setattr(self, ('a_player_legs[' + str(i) + ']'), pyglet.image.load(file_directory, open_file))
+            a_player_legs_left.append(getattr(self, 'i_player_legs_left' + str(i)))
+           
+        self.a_player_legs_left = pyglet.image.Animation.from_image_sequence(a_player_legs_left, 0.2, loop=True)    
+        self.a_player_legs_left = pyglet.sprite.Sprite(self.a_player_legs_left)       
     def weapons(self):
         #global resources
         file = resources.open('images/right/weapons/spear/sper.png')
@@ -80,7 +99,7 @@ class image_storage:
     
     
 images = image_storage()
-print images.a_player_legs
+#print images.a_player_legs
 #print images
 #i_arms_20
 #i_arms_15
@@ -358,15 +377,15 @@ class player:                                                   # mangjaklassi l
         #-20
         #images.a_player_legs.blit(room_1.view(self.pp1)[0], room_1.view(self.pp1)[1])
         
-        images.i_pl_torso.x = room_1.view(self.pp1)[0]
-        images.i_pl_torso.y = room_1.view(self.pp1)[1]
-        images.i_pl_torso.draw()
+        self.i_torso.x = room_1.view(self.pp1)[0]
+        self.i_torso.y = room_1.view(self.pp1)[1]
+        self.i_torso.draw()
         
         
-        images.a_player_legs.x = room_1.view(self.pp1)[0] #+ self.width/2
-        images.a_player_legs.y = room_1.view(self.pp1)[1] #+ self.height/2
+        self.a_legs.x = room_1.view(self.pp1)[0] #+ self.width/2
+        self.a_legs.y = room_1.view(self.pp1)[1] #+ self.height/2
         
-        images.a_player_legs.draw()
+        self.a_legs.draw()
         
     def jemp(self):                                         # hyppamisfunktsioon
         if self.can_jump == True:                           # kas tohib hyppata?
@@ -576,8 +595,9 @@ class player:                                                   # mangjaklassi l
 
         in_screen(player_1, room_1)
         self.attack()             
-
-
+        
+        self.a_legs = getattr(images, ("a_player_legs_" + self.facing))
+        self.i_torso = getattr(images, ("i_pl_torso_" + self.facing))
           
           
             
