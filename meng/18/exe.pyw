@@ -5,6 +5,7 @@ import math
 from pyglet.window import key
 from pyglet.gl import *
 
+from funktsioonid import *
     
 window = pyglet.window.Window(vsync = False)
 keys = key.KeyStateHandler()
@@ -17,12 +18,6 @@ pyglet.gl.glClearColor(0, 255, 0, 255)
 
 
 #-------------failide-laadimine-------------#
-pimage =  pyglet.resource.image('lel.jpg')
-i_pp1 = pyglet.image.load('pp1.jpg')
-i_pp2 = pyglet.image.load('pp2.jpg')
-i_pp3 = pyglet.image.load('pp3.jpg')
-i_pp4 = pyglet.image.load('pp4.jpg')
-
 resources =  zipfile.ZipFile('resources.zip')
 
 class image_storage:
@@ -30,11 +25,23 @@ class image_storage:
 
         #self.image_locl = pyglet.resource.ZIPLocation(resources, 'images/')
         #self.image_locl = pyglet.resource.ZIPLocation(resources, 'images/right/weapons/spear')
+        self.debug()
         self.player()
         self.weapons()
         self.environment()
         
+    def debug(self):
+        open_file = resources.open('debug/kast.png')
+        self.kast = pyglet.image.load('kast.png', open_file)
         
+        open_file = resources.open('debug/pp1.png')
+        self.i_pp1 = pyglet.image.load('pp1.png', open_file)
+        open_file = resources.open('debug/pp2.png') 
+        self.i_pp2 = pyglet.image.load('pp2.png', open_file)
+        open_file = resources.open('debug/pp3.png')
+        self.i_pp3 = pyglet.image.load('pp3.png', open_file)
+        open_file = resources.open('debug/pp4.png')   
+        self.i_pp4 = pyglet.image.load('pp4.png', open_file)
         
         
     def player(self):
@@ -54,7 +61,7 @@ class image_storage:
             #strng.replace('-', 'm')
             strng = str(i).replace('-', 'm')
                 #strng = 'm' + str(-1*i)
-            file_directory = 'images/right/player/arms/' + strng + '.jpg'
+            file_directory = 'images/right/player/arms/' + strng + '.png'
             open_file = resources.open(file_directory)
             #setattr(images, 'i_player_arms_' + strng, pyglet.image.load(dir))
             
@@ -129,102 +136,14 @@ images = image_storage()
 #------------------------------------------------#
 
 
-#-----------------------------Funktsioonid-----------------------------#
-
-def angle(ang):
-    cos = math.cos(math.radians(ang))
-    sin = math.sin(math.radians(ang))    
-    return [cos, sin]
-    
-
-def update(dt): # vajalik kella/kiiruse jaoks
-    return 0
-
-
-def gravity(ob):
-    if "_on_ground" in str(ob.collisions):
-        ob.can_jump = True
-        ob.jump = False
-        ob.vel[1] = 0
-    else:
-        ob.can_jump = False
-        if ob.vel[1] > -20:   
-            ob.vel[1] -= 0.5        
-        
-def collide(ob1, ob2): # kokkupuudete kontrolli funktsioon
-    
-    status = "_False"
-    Vtime = 1   # vertikaalne aeg alla
-    RHtime = 1  # vertikaalne aeg paremale
-    LHtime = 1  # vertikaalne aeg vasakule
-    UVtime = 1  # vertikaalne aeg ylesse
-    
-    if (str(ob2) + "_False") in ob1.collisions:         # kui teise objekti nimetus leitakse koos vastava liidesega esimese objekti kokkupuutumiste nimekirjast 
-        i = ob1.collisions.index(str(ob2) + "_False")   # saab i vaartuseks mitmendal kohal objekt oma liidesega selles nimekirjas oli
-    elif (str(ob2) + "_on_ground") in ob1.collisions:
-        i = ob1.collisions.index(str(ob2) + "_on_ground")
-    elif (str(ob2) + "_right_side") in ob1.collisions:
-        i = ob1.collisions.index(str(ob2) + "_right_side")    
-    elif (str(ob2) + "_left_side") in ob1.collisions:
-        i = ob1.collisions.index(str(ob2) + "_left_side")
-    elif (str(ob2) + "_on_top") in ob1.collisions:
-        i = ob1.collisions.index(str(ob2) + "_on_top")          
-               
-    #----------Kiirused-kontrollideks----------#   
-    Vspeed = ob1.vel[1] + -0.5
-    Vdistance = ob2.pp2[1] - ob1.pp1[1]
-    if Vspeed != 0:                         # nulliga ei saa jagada
-        Vtime = Vdistance / Vspeed
-        
-    UVspeed = ob1.vel[1] + -100
-    UVdistance = ob2.pp1[1] - ob1.pp2[1]
-    if UVspeed != 0:
-        UVtime = UVdistance / UVspeed    
-        
-    RHspeed = ob1.vel[0] + 1
-    RHdistance = ob2.pp1[0] - ob1.pp4[0]
-    if RHspeed != 0:
-        RHtime = RHdistance / RHspeed
-        
-    LHspeed = ob1.vel[0] - 1    
-    LHdistance = ob2.pp4[0] - ob1.pp1[0]    
-    if LHspeed !=0:
-        LHtime = LHdistance / LHspeed    
-        
-                     
-    if (ob1.pp1[0] <= ob2.pp3[0] and ob1.pp1[0] >= ob2.pp1[0])  or (ob1.pp3[0] >=  ob2.pp1[0] and ob1.pp3[0] <= ob2.pp3[0]):
-        if Vtime >= 0 and Vtime < 1:    # ennetav kokkupuutekontroll, tapsem kui punktide kasutamine
-            status = "_on_ground"
-            ob1.pp1[1] = ob2.pp2[1] + 0.05
-        elif UVtime >= 0 and UVtime < 1:
-            status = "_on_top"
-
-    elif ob1.pp2[1] < ob2.pp1[1] or ob1.pp1[1] > ob2.pp2[1]: # Kui objekt asub teisest objektist korgemal
-        pass                                                 # siis lopetatakse funktsioon siinsamas. 
-
-    elif RHtime >=0 and RHtime <1:
-            status = "_right_side"
-    elif LHtime >=0 and LHtime <1:
-            status = "_left_side"    
-        
-
-    ob1.collisions[i] = str(ob2) + status # esimese objekti kokkupuudete nimekirja kohal i asuv vaartus muudetakse stringiks mis koosneb objekti nimest ja kokkupuute tyybist
+#-----------------------------Funktsioonid-----------------------------#             
 
 def collision_group():
     global current_room                  # uuendatakse ning joonistatakse k6ik platvormid nimekirjas platvormid, kokkupuutekontrolli kasutatakse platvormide uuenduses
     for i in range(len(current_room.platvormid)):
         current_room.platvormid[i].update()
         current_room.platvormid[i].draw()    
-
-def in_screen(ob, room):    # funktsioon mis t6lgendab koordinaate ekraanikoordinaatideks
-        if ob.pp1[0] - room.offset[0] != room.clearance[0]:
-            room.offset[0] = ob.pp1[0] - room.clearance[0]
-        if ob.pp3[0] - room.offset[0] > room.clearance[1]:
-            room.offset[0] = ob.pp3[0] - room.clearance[1]
-            
-        if ob.pp1[1] - room.offset[1] != room.clearance[2]:
-            room.offset[1] = ob.pp1[1] - room.clearance[2]
-            
+           
 def controls():                                                     # nupuvajutused
     global current_room
     if keys[key.W]:                 
@@ -260,13 +179,7 @@ def controls():                                                     # nupuvajutu
 #----------------------------------------------------------------------#            
 
 pyglet.clock.schedule_interval(update, 1.0/90.0) # programmi kiirus
-pyglet.clock.set_fps_limit(90)                   # kaadrisageduse piirang
-
-#def on_key_release(symbol):#,# modifier):
-    #if symbol == key.SPACE:
-    #    print "heh"   
-    #    player_1.att = False
-    
+pyglet.clock.set_fps_limit(90)                   # kaadrisageduse piirang 
     
 #--------------------------------klassid-------------------------------# 
         
@@ -322,32 +235,9 @@ class player:                                                   # mangjaklassi l
         #i_pp4.blit(room_1.view(self.center)[0], room_1.view(self.center)[1])
         
         anglestring = str(self.att_angle).replace('-', 'm')
-        #if '-' in anglestring:
-        #    anglestring = 'm' + str(-1*self.att_angle)
-        #anglestring.replace('-', 'm')
         if anglestring != 'm25' and anglestring != '25':
             self.image = getattr(images, "i_player_arms_" + str(anglestring))
-        
-        #if self.att_angle == 20:
-        #    self.image = i_sl_ud_1
-        #elif self.att_angle == 15:
-        #    self.image = i_sl_ud_2
-        #elif self.att_angle == 10:
-        #    self.image = i_sl_ud_3
-        #elif self.att_angle == 5:
-        #    self.image = i_sl_ud_4
-        #elif self.att_angle == 0:
-        #    self.image = i_sl_ud_5
-        #    spear.rotation = 0     
-        #elif self.att_angle == -5:
-        #    self.image = i_sl_ud_6
-        #elif self.att_angle == -10:
-        #    self.image = i_sl_ud_7
-        #elif self.att_angle == -15:
-        #    self.image = i_sl_ud_8
-        #elif self.att_angle == -20:
-        #    self.image = i_sl_ud_9
-            
+    
        
         spear.x = room_1.view(self.pp1)[0] + self.width/2
         spear.y = room_1.view(self.pp1)[1] + self.height/2 #+ 12.5
@@ -497,7 +387,7 @@ class player:                                                   # mangjaklassi l
                                  
         if self.att == False:
             self.att_pos = self.center
-            i_pp1.blit(room_1.view(self.att_pos)[0], room_1.view(self.att_pos)[1])
+            images.i_pp1.blit(room_1.view(self.att_pos)[0], room_1.view(self.att_pos)[1])
             pass
         
 
@@ -546,7 +436,7 @@ class player:                                                   # mangjaklassi l
         self.att_pos[1] = self.center[1] +(self.spear_rad * self.att_vel[1]) #+ 100
 
               
-        i_pp1.blit(room_1.view(self.att_pos)[0], room_1.view(self.att_pos)[1]) # joonista ryndepunkt
+        images.i_pp1.blit(room_1.view(self.att_pos)[0], room_1.view(self.att_pos)[1]) # joonista ryndepunkt
         
         
         
@@ -688,7 +578,7 @@ class sprite:
 
 
 #-----------------------------Loomine----------------------------------#        
-player_1=player([200, 100], pimage) # loob mangja, kasutades player klassi ning maarates ara alutsamiskoordinaadid ning kasutatava pildifaili
+player_1=player([200, 100], images.kast) # loob mangja, kasutades player klassi ning maarates ara alutsamiskoordinaadid ning kasutatava pildifaili
 
 spear = pyglet.sprite.Sprite(images.i_spear_r, x=player_1.pp1[0], y=player_1.pp1[1])
 spear.image.anchor_x += player_1.image.width/2 #- player_1.height/2
