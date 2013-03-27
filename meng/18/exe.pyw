@@ -18,7 +18,7 @@ pyglet.gl.glClearColor(0, 255, 0, 255)
 
 
 #-------------failide-laadimine-------------#
-resources =  zipfile.ZipFile('resources.zip')
+resources =  pyglet.resource.ZIPLocation(zipfile.ZipFile('resources.zip'), '')
 
 class image_storage:
     def  __init__(self):
@@ -100,8 +100,8 @@ class image_storage:
         
         
     def environment(self):
-        file = resources.open('images/environment/platform.jpg')
-        self.i_platform = pyglet.image.load('platform.jpg', file)    
+        file = resources.open('debug/platform.png')
+        self.i_platform = pyglet.image.load('platform.png', file)    
         
     
     
