@@ -53,7 +53,12 @@ class image_storage:
 
         open_file = resources.open('images/left/player/pl_torso.png')
         self.i_pl_torso_left = pyglet.image.load('pl_torso.png', open_file)
-        self.i_pl_torso_left = pyglet.sprite.Sprite(self.i_pl_torso_left)        
+        self.i_pl_torso_left = pyglet.sprite.Sprite(self.i_pl_torso_left)
+        
+        i_r_l_arm_20 = resources.open('images/right/player/arms/l_arm/l_20.png')
+        self.i_r_l_arm_20 = pyglet.image.load('images/right/player/arms/l_arm/l_20.png', i_r_l_arm_20)
+        
+                
         
         
         for i in range(20, -25, -5): #laeb sisse k2te pildifailid iga rynnaku nurga jaoks
