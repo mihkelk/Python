@@ -1,9 +1,12 @@
 from mmap import mmap,ACCESS_READ
 from xlrd import open_workbook, cellname
+from Tkinter import *
+#from GUI import *
 
 wb = open_workbook('printimise_kulu.xls')
 sheet = wb.sheets()[8]
 #ToonerV = 1
+master = Tk()
 
 class printer():
     def __init__(self, name, order, tabel):
@@ -27,8 +30,22 @@ class rida():
         self.tulp_e = sheet.cell(self.number, 4).value
         self.tulp_f = sheet.cell(self.number, 5).value
         self.tulp_g = sheet.cell(self.number, 6).value  
-        self.kuu_algul = sheet.cell(self.number, 7).value  
-
+        self.kuu_algul = sheet.cell(self.number, 7).value
+        self.create_labels()
+        
+    def create_labels(self):
+        global master
+        if self.order %2:
+            verv="white"
+        else:
+            verv="gray"    
+        self.labels = [
+                       Label(master, text=self.printer, anchor = W, bg=verv),      
+                       Label(master, text=self.tooner, anchor = W, bg=verv),
+                       Label(master, text=self.tulp_c, anchor = W, bg=verv),
+                       Label(master, text=self.tulp_e, anchor = W, bg=verv),
+                       Label(master, text=self.tulp_f, anchor = W, bg=verv),
+                       ]
 class tabel():
     def __init__(self, name, begin, laius, k6rgus):#, second, third):
         self.name = name
@@ -41,15 +58,16 @@ class tabel():
         for i in range(self.k6rgus):
                 #print i
             r = rida(sheet.cell(i+self.begin ,0).value, i+self.begin, self)
+            
             self.read.append(r)
             #if i != 0:
                 #print self.read[i].printer
 
         
         
-        self.printer_1 = printer(sheet.cell(1,0).value, 1, self)
-        self.printer_2 = printer(sheet.cell(2,0).value, 2, self)
-        self.printer_3 = printer(sheet.cell(3,0).value, 3, self)
+        #self.printer_1 = printer(sheet.cell(1,0).value, 1, self)
+        #self.printer_2 = printer(sheet.cell(2,0).value, 2, self)
+        #self.printer_3 = printer(sheet.cell(3,0).value, 3, self)
         
         
         
@@ -65,6 +83,6 @@ t2is = tabel("T2is kassetid", 17, 8, 12)#),29,20)
 
 #print t2is.printer_1.tulp_c
 
-print tyhjad.printer_1.name
+#print tyhjad.printer_1.name
 print tyhjad.read[1].kuu_algul
 print tyhjad.read[0].printer
