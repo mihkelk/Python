@@ -67,3 +67,4 @@ t2is = tabel("T2is kassetid", 17, 8, 12)#),29,20)
 
 print tyhjad.printer_1.name
 print tyhjad.read[1].kuu_algul
+print tyhjad.read[0].printer
