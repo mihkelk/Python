@@ -35,7 +35,7 @@ class menyy:
     def ok(self):
         global aktiv
         if aktiv != "1":
-            for c in range(5):
+            for c in range(len(aktiv.read[0].labels)):
                 for i in range(aktiv.k6rgus):
                     aktiv.read[i].labels[c].grid_forget()
         #self.master.quit()
@@ -59,7 +59,7 @@ def joonista_tabel(master, active_table):
     master = master
     active_table = active_table
 
-    for c in range(5):
+    for c in range(len(active_table.read[0].labels)):#range(4):
         for i in range(active_table.k6rgus):  
 
             active_table.read[i].labels[c].grid(row=i, column=c, sticky=W+E, padx = 1) 
